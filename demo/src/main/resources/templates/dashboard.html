@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Principal - Promex</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: white;
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #1f1f1f;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        header img {
+            max-width: 180px;
+        }
+
+        #logout-form {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        #logout-form button {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #logout-form button:hover {
+            background-color: #cc0000;
+        }
+
+        main {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1 0 auto;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+
+        .modules {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .module-card {
+            background-color: #1f1f1f;
+            padding: 30px;
+            border-radius: 10px;
+            width: 280px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            transition: transform 0.2s ease;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .module-card img {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 15px;
+        }
+
+        .module-card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #ff0000;
+        }
+
+        .module-card p {
+            font-size: 14px;
+            color: #cccccc;
+            margin-bottom: 20px;
+        }
+
+        .module-card a {
+            text-decoration: none;
+            background-color: #ff0000;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+        }
+
+        .module-card a:hover {
+            background-color: #cc0000;
+        }
+
+        footer {
+            background-color: #1f1f1f;
+            padding: 15px 0;
+            text-align: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <img src="/images/promex-logo.png" alt="Logo Promex">
+    <form id="logout-form" th:action="@{/logout}" method="post">
+        <button type="submit">Cerrar Sesión</button>
+    </form>
+</header>
+
+<main>
+    <h1>Bienvenido al Panel Principal</h1>
+    <div class="modules">
+        <div class="module-card">
+            <img src="/images/view_user/Icon-module-register.png" alt="Módulo Llenado">
+            <h3>Llenado de Ordenes</h3>
+            <p>Gestiona y actualiza la información proveniente de las ordenes de compra del sistema Softland.</p>
+            <a href="/mod_llenado">Ir al Módulo</a>
+        </div>
+
+        <div class="module-card">
+            <img src="/images/view_user/Icon-module-reports.png" alt="Módulo Reportes">
+            <h3>Generación de Reportes</h3>
+            <p>Visualiza reportes anuales o bimestrales con los datos recopilados por el sistema.</p>
+            <a href="mod_rep.html">Generar Reportes</a>
+        </div>
+    </div>
+</main>
+
+<footer>
+    &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
+</footer>
+</body>
+</html>
