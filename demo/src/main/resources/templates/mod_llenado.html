@@ -49,13 +49,28 @@
 
         h2 {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+        }
+
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .filtros input {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #2c2c2c;
+            color: white;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
             background-color: #1e1e1e;
             color: #ffffff;
             border-radius: 10px;
@@ -73,70 +88,6 @@
 
         tbody tr:hover {
             background-color: #2a2a2a;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background-color: #1f1f1f;
-            color: white;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 700px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-content h2 {
-            margin-top: 0;
-        }
-
-        .modal-content label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: bold;
-        }
-
-        .modal-content input, .modal-content textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            border: none;
-            background-color: #2c2c2c;
-            color: white;
-        }
-
-        .modal-content button {
-            width: 100%;
-            padding: 10px;
-            background-color: #ff0000;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .modal-content button:hover {
-            background-color: #cc0000;
-        }
-
-        .close {
-            float: right;
-            font-size: 24px;
             cursor: pointer;
         }
 
@@ -159,14 +110,26 @@
 
 <div class="main-content">
     <h2>Órdenes de Compra</h2>
+
+    <div class="filtros">
+        <input type="text" id="filtroSolicitud" placeholder="Buscar Solicitud OC">
+        <input type="text" id="filtroOrden" placeholder="Buscar Orden Compra">
+        <input type="text" id="filtroCentro" placeholder="Buscar Centro de Costos">
+        <input type="date" id="filtroFecha">
+    </div>
+
     <table>
         <thead>
         <tr>
+            <th>Solicitud OC</th>
+            <th>Fecha Requerida</th>
             <th>Orden Compra</th>
             <th>Fecha OC</th>
-            <th>Descripción</th>
-            <th>Centro Costos</th>
+            <th>Centro de Costos</th>
             <th>Cuenta Contable</th>
+            <th>Descripción</th>
+            <th>Proveedor</th>
+            <th>Estado</th>
         </tr>
         </thead>
         <tbody id="tablaBody"></tbody>
@@ -177,5 +140,59 @@
     &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
 </footer>
 
+<script>
+    function filtrarFilas(data) {
+        const solicitud = document.getElementById("filtroSolicitud").value.toLowerCase();
+        const orden = document.getElementById("filtroOrden").value.toLowerCase();
+        const centro = document.getElementById("filtroCentro").value.toLowerCase();
+        const fecha = document.getElementById("filtroFecha").value;
+
+        return data.filter(item => {
+            return (!solicitud || item.solicitudOc.toLowerCase().includes(solicitud)) &&
+                (!orden || item.ordenCompra.toLowerCase().includes(orden)) &&
+                (!centro || item.centroCosto.toLowerCase().includes(centro)) &&
+                (!fecha || item.fechaRequerida?.substring(0, 10) === fecha);
+        });
+    }
+
+    function cargarTabla(data) {
+        const tbody = document.getElementById("tablaBody");
+        tbody.innerHTML = "";
+        data.forEach(item => {
+            const tr = document.createElement("tr");
+            tr.onclick = () => window.location.href = `/llenado/${item.id}`;
+            tr.innerHTML = `
+                <td>${item.solicitudOc}</td>
+                <td>${item.fechaRequerida ? new Date(item.fechaRequerida).toLocaleDateString() : ''}</td>
+                <td>${item.ordenCompra}</td>
+                <td>${item.fecha ? new Date(item.fecha).toLocaleDateString() : ''}</td>
+                <td>${item.centroCosto}</td>
+                <td>${item.cuentaContable}</td>
+                <td>${item.descCuentaContable}</td>
+                <td>${item.nombreProveedor}</td>
+                <td>${item.estado}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let dataGlobal = [];
+        fetch('/api/ordenes-compra')
+            .then(response => response.json())
+            .then(data => {
+                dataGlobal = data;
+                cargarTabla(data);
+
+                document.querySelectorAll('.filtros input').forEach(input => {
+                    input.addEventListener('input', () => {
+                        const filtrados = filtrarFilas(dataGlobal);
+                        cargarTabla(filtrados);
+                    });
+                });
+            })
+            .catch(error => console.error("Error al obtener las órdenes de compra:", error));
+    });
+</script>
 </body>
 </html>

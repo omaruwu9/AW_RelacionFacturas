@@ -7,4 +7,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class DashboardController {
     @GetMapping("/mod_llenado")
     public String mod_llenado() {return "mod_llenado";}
+
 }

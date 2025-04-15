@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Llenado de Orden de Compra</title>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #2c2c2c;
+            border-bottom: 1px solid #444;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header img {
+            height: 50px;
+        }
+
+        #botones button {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        #botones button:hover {
+            background-color: #ff0000;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 60px;
+            max-width: 1100px;
+            margin: auto;
+            background-color: #2b2b2b;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        h2 {
+            text-align: left;
+            margin-bottom: 30px;
+            color: #ff0000;
+        }
+
+        .info-orden {
+            margin-bottom: 40px;
+            border: 1px solid #444;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #3a3a3a;
+        }
+
+        .info-orden p {
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input, select, textarea {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #555;
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            width: 100%;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .submit-container {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        button.submit-btn {
+            background-color: #0078d4;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button.submit-btn:hover {
+            background-color: #ff0000;
+            background-color: #ff0000;
+        }
+
+        footer {
+            background-color: #2c2c2c;
+            border-top: 1px solid #444;
+            color: #aaa;
+            text-align: center;
+            padding: 15px 0;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <img src="/images/promex-logo.png" alt="Promex Logo">
+    <div id="botones">
+        <button onclick="location.href='/volver'">Regresar</button>
+        <button onclick="location.href='/logout'">Cerrar Sesión</button>
+    </div>
+</header>
+
+<div class="main-content">
+    <h2>Llenado de Orden de Compra</h2>
+    <div class="info-orden">
+        <p><strong>Solicitud OC:</strong> <span th:text="${orden.solicitudOc}">-</span></p>
+        <p><strong>Fecha Requerida:</strong> <span th:text="${orden.fechaRequerida}">-</span></p>
+        <p><strong>Orden de Compra:</strong> <span th:text="${orden.ordenCompra}">-</span></p>
+        <p><strong>Centro de Costo:</strong> <span th:text="${orden.centroCosto}">-</span></p>
+        <p><strong>Cuenta Contable:</strong> <span th:text="${orden.cuentaContable}">-</span></p>
+        <p><strong>Descripción:</strong> <span th:text="${orden.descCuentaContable}">-</span></p>
+        <p><strong>Proveedor:</strong> <span th:text="${orden.nombreProveedor}">-</span></p>
+        <p><strong>Estado:</strong> <span th:text="${orden.estado}">-</span></p>
+    </div>
+
+
+    <form id="formLlenado">
+        <div>
+            <label for="fechaRecepcion">Fecha de Recepción</label>
+            <input type="date" id="fechaRecepcion" name="fechaRecepcion">
+        </div>
+        <div>
+            <label for="cantidadRecibida">Cantidad Recibida</label>
+            <input type="number" id="cantidadRecibida" name="cantidadRecibida">
+        </div>
+        <div style="grid-column: 1 / -1;">
+            <label for="observaciones">Observaciones</label>
+            <textarea id="observaciones" name="observaciones" rows="4"></textarea>
+        </div>
+        <div class="submit-container">
+            <button type="submit" class="submit-btn">Guardar</button>
+        </div>
+    </form>
+</div>
+
+<footer>
+    &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
+</footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const ordenCompraId = window.location.pathname.split("/").pop();
+        const url = `/api/ordenes-compra/${ordenCompraId}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("lblOrdenCompra").textContent = data.ordenCompra;
+                document.getElementById("lblCentroCosto").textContent = data.centroCosto;
+                document.getElementById("lblCuentaContable").textContent = data.cuentaContable;
+                document.getElementById("lblProveedor").textContent = data.nombreProveedor;
+                document.getElementById("lblFecha").textContent = new Date(data.fecha).toLocaleDateString();
+            })
+            .catch(error => console.error("Error al obtener los datos de la orden:", error));
+
+        document.getElementById("formLlenado").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const datos = {
+                ordenCompra: ordenCompraId,
+                fechaRecepcion: document.getElementById("fechaRecepcion").value,
+                cantidadRecibida: document.getElementById("cantidadRecibida").value,
+                observaciones: document.getElementById("observaciones").value
+            };
+
+            fetch(`/api/llenado`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datos)
+            })
+                .then(res => {
+                    if (res.ok) {
+                        alert("Datos guardados correctamente");
+                        location.href = "/mod_llenado.html";
+                    } else {
+                        alert("Error al guardar los datos");
+                    }
+                })
+                .catch(err => {
+                    console.error("Error al enviar los datos:", err);
+                });
+        });
+    });
+</script>
+</body>
+</html>
