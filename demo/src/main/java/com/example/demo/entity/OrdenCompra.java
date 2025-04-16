@@ -16,6 +16,9 @@ public class OrdenCompra {
     @Column(name = "orden_compra")
     private String ordenCompra;
 
+    @Column(name = "descripcion")
+    private String descripcion;
+
     @Column(name = "solicitud_oc")
     private String solicitudOc;
 
@@ -55,6 +58,14 @@ public class OrdenCompra {
 
     public void setOrdenCompra(String ordenCompra) {
         this.ordenCompra = ordenCompra;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public String getSolicitudOc() {

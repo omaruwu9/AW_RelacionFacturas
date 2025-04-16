@@ -135,7 +135,7 @@
         <input type="text" id="filtroSolicitud" placeholder="Buscar Solicitud OC">
         <input type="text" id="filtroOrden" placeholder="Buscar Orden Compra">
         <input type="text" id="filtroCentro" placeholder="Buscar Centro de Costos">
-<!--        <input type="date" id="filtroFecha">-->
+        <input type="date" id="filtroFecha">
     </div>
 
     <table>
@@ -145,6 +145,7 @@
             <th>Fecha Requerida</th>
             <th>Orden Compra</th>
             <th>Fecha OC</th>
+            <th>Descripcion OC</th>
             <th>Centro de Costos</th>
             <th>Cuenta Contable</th>
             <th>Descripción</th>
@@ -165,7 +166,7 @@
         const solicitud = document.getElementById("filtroSolicitud").value.toLowerCase();
         const orden = document.getElementById("filtroOrden").value.toLowerCase();
         const centro = document.getElementById("filtroCentro").value.toLowerCase();
-        // const fecha = document.getElementById("filtroFecha").value;
+        const fecha = document.getElementById("filtroFecha").value;
 
         return data.filter(item => {
             return (!solicitud || item.solicitudOc.toLowerCase().includes(solicitud)) &&
@@ -183,9 +184,10 @@
             tr.onclick = () => window.location.href = `/llenado/${item.id}`;
             tr.innerHTML = `
                 <td>${item.solicitudOc}</td>
-                <td>${item.fechaRequerida ? new Date(item.fechaRequerida).toLocaleDateString() : ''}</td>
+                <td>${item.fechaRequerida}</td>
                 <td>${item.ordenCompra}</td>
-                <td>${item.fecha ? new Date(item.fecha).toLocaleDateString() : ''}</td>
+                <td>${item.fecha}</td> <!-- Esto debe coincidir -->
+                <th>${item.descripcion}</th>
                 <td>${item.centroCosto}</td>
                 <td>${item.cuentaContable}</td>
                 <td>${item.descCuentaContable}</td>

@@ -1,13 +1,18 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.Llenado;
 import com.example.demo.entity.OrdenCompra;
 import com.example.demo.repository.OrdenCompraRepository;
+import com.example.demo.service.LlenadoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Optional;
 
@@ -16,6 +21,8 @@ public class LlenadoController {
 
     @Autowired
     private OrdenCompraRepository ordenCompraRepository;
+
+    private final LlenadoService llenadoService;
 
     @GetMapping("/api/ordenes-compra/{id}")
     public ResponseEntity<OrdenCompra> obtenerOrdenPorId(@PathVariable Integer id) {
@@ -39,6 +46,20 @@ public class LlenadoController {
     @GetMapping("/volver")
     public String volverAOrdenes() {
         return "mod_llenado";
+    }
+
+    public LlenadoController(LlenadoService llenadoService) {
+        this.llenadoService = llenadoService;
+    }
+
+    @PostMapping
+    public ResponseEntity<?> guardar(@RequestBody Llenado llenado) {
+        try {
+            Llenado guardado = llenadoService.guardarLlenado(llenado);
+            return ResponseEntity.ok(guardado);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar: " + e.getMessage());
+        }
     }
 
 }

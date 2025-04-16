@@ -1,28 +1,30 @@
+<!-- Vista de formulario de llenado con funciones completas -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <title>Formulario de Llenado</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Llenado de Orden de Compra - Promex</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #101010;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
             color: #f4f4f4;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
         }
 
         header {
-            background-color: #0d0d0d;
+            background-color: #1f1f1f;
             padding: 20px 60px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #e60012;
+            border-bottom: 3px solid #e74c3c;
         }
 
         header img {
@@ -34,7 +36,7 @@
             color: white;
             border: none;
             padding: 10px 30px;
-            border-radius: 3px;
+            border-radius: 5px;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
@@ -46,97 +48,97 @@
             background-color: #b3000e;
         }
 
-        .main-content {
-            flex: 1;
-            padding: 50px 60px;
-            max-width: 1280px;
+        .container {
+            max-width: 1200px;
             margin: 30px auto;
+            padding: 40px;
             background-color: #1a1a1a;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
         }
 
         h2 {
-            font-size: 32px;
-            margin-bottom: 35px;
-            color: #e60012;
-            border-left: 5px solid #e60012;
-            padding-left: 20px;
-        }
-
-        .info-orden {
-            margin-bottom: 40px;
-            background-color: #222;
-            padding: 30px;
-            border-radius: 8px;
-            border: 1px solid #333;
+            color: #e74c3c;
+            margin-bottom: 25px;
+            font-size: 26px;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 10px;
         }
 
         .info-orden p {
-            margin: 10px 0;
-            font-weight: 500;
+            margin: 5px 0;
             font-size: 15px;
         }
 
+        .info-orden strong {
+            color: #ff6f61;
+        }
+
         form {
+            margin-top: 30px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
         }
 
         label {
             font-weight: 600;
-            margin-bottom: 8px;
-            display: block;
+            margin-bottom: 5px;
+            color: #ffffff;
         }
 
-        input, select, textarea {
-            padding: 12px;
-            border-radius: 5px;
-            border: 1px solid #444;
-            background-color: #0f0f0f;
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        select,
+        textarea {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #555;
+            background-color: #2c2c2c;
             color: #f4f4f4;
             font-size: 14px;
-            width: 100%;
+            transition: border-color 0.2s ease;
         }
 
-        textarea {
-            resize: vertical;
+        select option {
+            background-color: #2c2c2c;
+            color: #f4f4f4;
         }
 
-        .submit-container {
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #e74c3c;
+            background-color: #262626;
+        }
+
+        .full-width {
             grid-column: 1 / -1;
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 25px;
         }
 
-        button.submit-btn {
-            background-color: #e60012;
+        button[type="submit"] {
+            background-color: #e74c3c;
             color: white;
             border: none;
-            padding: 14px 40px;
-            border-radius: 4px;
+            padding: 14px;
             font-size: 16px;
             font-weight: bold;
+            border-radius: 6px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 200px;
+            margin: 0 auto;
         }
 
-        button.submit-btn:hover {
-            background-color: #b3000e;
-        }
-
-        footer {
-            background-color: #0d0d0d;
-            color: #aaa;
-            text-align: center;
-            padding: 18px 0;
-            font-size: 14px;
-            border-top: 1px solid #2a2a2a;
+        button[type="submit"]:hover {
+            background-color: #c0392b;
         }
     </style>
 </head>
 <body>
+
 <header>
     <img src="/images/promex-logo.png" alt="Promex Logo">
     <div id="botones">
@@ -145,12 +147,14 @@
     </div>
 </header>
 
-<div class="main-content">
+<div class="container">
     <h2>Llenado de Orden de Compra</h2>
+
     <div class="info-orden">
         <p><strong>Solicitud OC:</strong> <span th:text="${orden.solicitudOc}">-</span></p>
         <p><strong>Fecha Requerida:</strong> <span th:text="${orden.fechaRequerida}">-</span></p>
         <p><strong>Orden de Compra:</strong> <span th:text="${orden.ordenCompra}">-</span></p>
+        <p><strong>Descripción OC:</strong> <span th:text="${orden.descripcion}">-</span></p>
         <p><strong>Centro de Costo:</strong> <span th:text="${orden.centroCosto}">-</span></p>
         <p><strong>Cuenta Contable:</strong> <span th:text="${orden.cuentaContable}">-</span></p>
         <p><strong>Descripción:</strong> <span th:text="${orden.descCuentaContable}">-</span></p>
@@ -158,29 +162,62 @@
         <p><strong>Estado:</strong> <span th:text="${orden.estado}">-</span></p>
     </div>
 
-    <form id="formLlenado">
-        <div>
-            <label for="fechaRecepcion">Fecha de Recepción</label>
-            <input type="date" id="fechaRecepcion" name="fechaRecepcion">
-        </div>
-        <div>
-            <label for="cantidadRecibida">Cantidad Recibida</label>
-            <input type="number" id="cantidadRecibida" name="cantidadRecibida">
-        </div>
-        <div style="grid-column: 1 / -1;">
-            <label for="observaciones">Observaciones</label>
-            <textarea id="observaciones" name="observaciones" rows="4"></textarea>
-        </div>
-        <div class="submit-container">
-            <button type="submit" class="submit-btn">Guardar</button>
+    <form id="llenadoForm">
+        <input type="hidden" id="ordenId" name="id">
+        <input type="hidden" id="ordenCompra" name="orden_compra">
+
+        <label for="archivo">Cargar archivo (XML/PDF):</label>
+        <input type="file" id="archivo" accept=".xml,.pdf" class="full-width">
+
+        <label for="cantidad">Cantidad</label>
+        <input type="number" id="cantidad" name="cantidad">
+
+        <label for="moneda">Moneda</label>
+        <select id="moneda" name="moneda">
+            <option value="MXN">MXN</option>
+            <option value="USD">USD</option>
+        </select>
+
+        <label for="pu">Precio Unitario</label>
+        <input type="number" step="0.01" id="pu" name="PU">
+
+        <label for="subtotal">Subtotal</label>
+        <input type="number" step="0.01" id="subtotal" name="subtotal">
+
+        <label for="iva">IVA (%)</label>
+        <input type="number" id="iva" name="IVA_porc">
+
+        <label for="total">Total</label>
+        <input type="number" step="0.01" id="total" name="Total">
+
+        <label for="tipoCambio">Tipo de Cambio</label>
+        <input type="number" step="0.01" id="tipoCambio" name="Tipo_cambio" readonly>
+
+        <label for="pesosTotales">Pesos Totales</label>
+        <input type="number" step="0.01" id="pesosTotales" name="pesos_totales">
+
+        <label for="poliza">Póliza Garantía</label>
+        <select id="poliza" name="poliza_garantia">
+            <option value="YES">YES</option>
+            <option value="N/A">N/A</option>
+        </select>
+
+        <label for="familia">Familia</label>
+        <select id="familia" name="id_familia"></select>
+
+        <label for="responsable">Responsable</label>
+        <select id="responsable" name="id_responsable"></select>
+
+        <label for="extPresupuesto">Ext. Presupuesto</label>
+        <select id="extPresupuesto" name="id_extpresupuesto"></select>
+
+        <div class="full-width">
+            <button type="submit">Guardar</button>
         </div>
     </form>
 </div>
 
-<footer>
-    &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
-</footer>
-
+<!-- RECUPERAR INFORMACIÓN DE LO QUE ESTAMOS LLENANDO -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const ordenCompraId = window.location.pathname.split("/").pop();
@@ -190,41 +227,113 @@
             .then(response => response.json())
             .then(data => {
                 document.getElementById("lblOrdenCompra").textContent = data.ordenCompra;
+                document.getElementById("lblDescripcionOC").textContent = data.ordenCompra;
                 document.getElementById("lblCentroCosto").textContent = data.centroCosto;
                 document.getElementById("lblCuentaContable").textContent = data.cuentaContable;
                 document.getElementById("lblProveedor").textContent = data.nombreProveedor;
                 document.getElementById("lblFecha").textContent = new Date(data.fecha).toLocaleDateString();
             })
             .catch(error => console.error("Error al obtener los datos de la orden:", error));
+    });
+</script>
 
-        document.getElementById("formLlenado").addEventListener("submit", function (event) {
-            event.preventDefault();
+<!-- LLENADO -->
+<script>
+    document.addEventListener("DOMContentLoaded", async function () {
+        const id = new URLSearchParams(window.location.search).get("id");
+        const orden = new URLSearchParams(window.location.search).get("orden");
+        document.getElementById("ordenId").value = id;
+        document.getElementById("ordenCompra").value = orden;
 
-            const datos = {
-                ordenCompra: ordenCompraId,
-                fechaRecepcion: document.getElementById("fechaRecepcion").value,
-                cantidadRecibida: document.getElementById("cantidadRecibida").value,
-                observaciones: document.getElementById("observaciones").value
-            };
+        const tipoCambioInput = document.getElementById("tipoCambio");
+        const monedaSelect = document.getElementById("moneda");
 
-            fetch(`/api/llenado`, {
+        async function obtenerTipoCambio() {
+            try {
+                const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=MXN");
+                const data = await res.json();
+                return data.rates.MXN;
+            } catch (e) {
+                console.error("Error al obtener tipo de cambio:", e);
+                return 1;
+            }
+        }
+
+        monedaSelect.addEventListener("change", async () => {
+            if (monedaSelect.value !== "MXN") {
+                const tipo = await obtenerTipoCambio();
+                tipoCambioInput.value = tipo.toFixed(2);
+                calcularPesosTotales();
+            } else {
+                tipoCambioInput.value = "1.00";
+                calcularPesosTotales();
+            }
+        });
+
+        function calcularPesosTotales() {
+            const subtotal = parseFloat(document.getElementById("subtotal").value || 0);
+            const tipoCambio = parseFloat(tipoCambioInput.value || 1);
+            document.getElementById("pesosTotales").value = (subtotal * tipoCambio).toFixed(2);
+        }
+
+        document.getElementById("subtotal").addEventListener("input", calcularPesosTotales);
+
+        // Cargar datos para selects
+        const entidades = [
+            { campo: "familia", idKey: "id_familia", textKey: "familia" },
+            { campo: "responsable", idKey: "id_responsable", textKey: "responsable" },
+            { campo: "extPresupuesto", idKey: "id_extpresupuesto", textKey: "ext_presupuesto" }
+        ];
+
+        for (const entidad of entidades) {
+            const res = await fetch(`/api/${entidad.campo}`);
+            const data = await res.json();
+            const select = document.getElementById(entidad.campo);
+            data.forEach(item => {
+                const opt = document.createElement("option");
+                opt.value = item[entidad.idKey];
+                opt.textContent = item[entidad.textKey];
+                select.appendChild(opt);
+            });
+        }
+
+
+        // Parsear XML (simulación)
+        document.getElementById("archivo").addEventListener("change", function (e) {
+            const archivo = e.target.files[0];
+            if (archivo && archivo.name.endsWith(".xml")) {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    const parser = new DOMParser();
+                    const xml = parser.parseFromString(reader.result, "application/xml");
+                    document.getElementById("cantidad").value = xml.querySelector("cantidad")?.textContent || "";
+                    document.getElementById("pu").value = xml.querySelector("precioUnitario")?.textContent || "";
+                    document.getElementById("subtotal").value = xml.querySelector("subtotal")?.textContent || "";
+                    document.getElementById("iva").value = xml.querySelector("iva")?.textContent || "";
+                    document.getElementById("total").value = xml.querySelector("total")?.textContent || "";
+                    calcularPesosTotales();
+                };
+                reader.readAsText(archivo);
+            }
+        });
+
+        // Guardar formulario
+        document.getElementById("llenadoForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const datos = Object.fromEntries(new FormData(e.target));
+
+            const res = await fetch("/api/llenado", {
                 method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(datos)
-            })
-                .then(res => {
-                    if (res.ok) {
-                        alert("Datos guardados correctamente");
-                        location.href = "/mod_llenado.html";
-                    } else {
-                        alert("Error al guardar los datos");
-                    }
-                })
-                .catch(err => {
-                    console.error("Error al enviar los datos:", err);
-                });
+            });
+
+            if (res.ok) {
+                alert("Registro guardado correctamente");
+                window.location.href = "/mod_llenado";
+            } else {
+                alert("Error al guardar el registro");
+            }
         });
     });
 </script>
