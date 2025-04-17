@@ -6,135 +6,17 @@
     <title>Formulario de Llenado</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: #121212;
-            color: #f4f4f4;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background-color: #1f1f1f;
-            padding: 20px 60px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid #e74c3c;
-        }
-
-        header img {
-            height: 60px;
-        }
-
-        #botones button {
-            background-color: #e60012;
-            color: white;
-            border: none;
-            padding: 10px 30px;
-            border-radius: 5px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-left: 12px;
-            transition: all 0.3s ease;
-        }
-
-        #botones button:hover {
-            background-color: #b3000e;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 40px;
-            background-color: #1a1a1a;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        h2 {
-            color: #e74c3c;
-            margin-bottom: 25px;
-            font-size: 26px;
-            border-bottom: 2px solid #e74c3c;
-            padding-bottom: 10px;
-        }
-
-        .info-orden p {
-            margin: 5px 0;
-            font-size: 15px;
-        }
-
-        .info-orden strong {
-            color: #ff6f61;
-        }
-
-        form {
-            margin-top: 30px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        label {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #ffffff;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="file"],
-        select,
-        textarea {
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #555;
-            background-color: #2c2c2c;
-            color: #f4f4f4;
-            font-size: 14px;
-            transition: border-color 0.2s ease;
-        }
-
-        select option {
-            background-color: #2c2c2c;
-            color: #f4f4f4;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #e74c3c;
-            background-color: #262626;
-        }
-
-        .full-width {
-            grid-column: 1 / -1;
-        }
-
-        button[type="submit"] {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 14px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            width: 200px;
-            margin: 0 auto;
-        }
-
-        button[type="submit"]:hover {
-            background-color: #c0392b;
-        }
+        /* Estilos resumidos para mantener claridad */
+        body { background-color: #121212; color: #f4f4f4; font-family: 'Segoe UI', sans-serif; }
+        header { background-color: #1f1f1f; padding: 20px 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #e74c3c; }
+        header img { height: 60px; }
+        #botones button { background-color: #e60012; color: white; border: none; padding: 10px 30px; border-radius: 5px; margin-left: 12px; cursor: pointer; font-weight: bold; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 40px; background-color: #1a1a1a; border-radius: 12px; }
+        h2 { color: #e74c3c; border-bottom: 2px solid #e74c3c; padding-bottom: 10px; }
+        form { margin-top: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        label { font-weight: 600; }
+        input, select { padding: 10px; border-radius: 6px; border: 1px solid #555; background-color: #2c2c2c; color: #f4f4f4; }
+        button[type="submit"] { background-color: #e74c3c; color: white; border: none; padding: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 200px; margin: 0 auto; }
     </style>
 </head>
 <body>
@@ -154,7 +36,7 @@
         <p><strong>Solicitud OC:</strong> <span th:text="${orden.solicitudOc}">-</span></p>
         <p><strong>Fecha Requerida:</strong> <span th:text="${orden.fechaRequerida}">-</span></p>
         <p><strong>Orden de Compra:</strong> <span th:text="${orden.ordenCompra}">-</span></p>
-        <p><strong>Descripción OC:</strong> <span th:text="${orden.descripcion}">-</span></p>
+        <p><strong>Descripción OC:</strong> <span id="descOC" th:text="${orden.descripcion}">-</span></p>
         <p><strong>Centro de Costo:</strong> <span th:text="${orden.centroCosto}">-</span></p>
         <p><strong>Cuenta Contable:</strong> <span th:text="${orden.cuentaContable}">-</span></p>
         <p><strong>Descripción:</strong> <span th:text="${orden.descCuentaContable}">-</span></p>
@@ -163,11 +45,20 @@
     </div>
 
     <form id="llenadoForm">
-        <input type="hidden" id="ordenId" name="id">
-        <input type="hidden" id="ordenCompra" name="orden_compra">
+        <input type="hidden" id="id" name="id">
+        <input type="hidden" id="orden_compra" name="orden_compra">
 
         <label for="archivo">Cargar archivo (XML/PDF):</label>
         <input type="file" id="archivo" accept=".xml,.pdf" class="full-width">
+
+        <label for="factura">Número de Factura</label>
+        <input type="text" id="factura" name="factura">
+
+        <label for="fecha">Fecha</label>
+        <input type="date" id="fecha" name="fecha">
+
+        <label for="folio_fiscal">Folio Fiscal</label>
+        <input type="text" id="folio_fiscal" name="folio_fiscal">
 
         <label for="cantidad">Cantidad</label>
         <input type="number" id="cantidad" name="cantidad">
@@ -179,19 +70,19 @@
         </select>
 
         <label for="pu">Precio Unitario</label>
-        <input type="number" step="0.01" id="pu" name="PU">
+        <input type="number" step="0.01" id="pu" name="pu">
 
         <label for="subtotal">Subtotal</label>
         <input type="number" step="0.01" id="subtotal" name="subtotal">
 
-        <label for="iva">IVA (%)</label>
-        <input type="number" id="iva" name="IVA_porc">
+        <label for="iva_porc">IVA (%)</label>
+        <input type="number" id="iva_porc" name="iva_porc">
 
         <label for="total">Total</label>
-        <input type="number" step="0.01" id="total" name="Total">
+        <input type="number" step="0.01" id="total" name="total">
 
-        <label for="tipoCambio">Tipo de Cambio</label>
-        <input type="number" step="0.01" id="tipoCambio" name="Tipo_cambio" readonly>
+        <label for="tipo_cambio">Tipo de Cambio</label>
+        <input type="number" step="0.01" id="tipo_cambio" name="tipo_cambio">
 
         <label for="pesosTotales">Pesos Totales</label>
         <input type="number" step="0.01" id="pesosTotales" name="pesos_totales">
@@ -217,35 +108,14 @@
     </form>
 </div>
 
-<!-- RECUPERAR INFORMACIÓN DE LO QUE ESTAMOS LLENANDO -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const ordenCompraId = window.location.pathname.split("/").pop();
-        const url = `/api/ordenes-compra/${ordenCompraId}`;
-
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("lblOrdenCompra").textContent = data.ordenCompra;
-                document.getElementById("lblDescripcionOC").textContent = data.ordenCompra;
-                document.getElementById("lblCentroCosto").textContent = data.centroCosto;
-                document.getElementById("lblCuentaContable").textContent = data.cuentaContable;
-                document.getElementById("lblProveedor").textContent = data.nombreProveedor;
-                document.getElementById("lblFecha").textContent = new Date(data.fecha).toLocaleDateString();
-            })
-            .catch(error => console.error("Error al obtener los datos de la orden:", error));
-    });
-</script>
-
-<!-- LLENADO -->
 <script>
     document.addEventListener("DOMContentLoaded", async function () {
         const id = new URLSearchParams(window.location.search).get("id");
         const orden = new URLSearchParams(window.location.search).get("orden");
-        document.getElementById("ordenId").value = id;
-        document.getElementById("ordenCompra").value = orden;
+        document.getElementById("id").value = id;
+        document.getElementById("orden_compra").value = orden;
 
-        const tipoCambioInput = document.getElementById("tipoCambio");
+        const tipoCambioInput = document.getElementById("tipo_cambio");
         const monedaSelect = document.getElementById("moneda");
 
         async function obtenerTipoCambio() {
@@ -253,21 +123,16 @@
                 const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=MXN");
                 const data = await res.json();
                 return data.rates.MXN;
-            } catch (e) {
-                console.error("Error al obtener tipo de cambio:", e);
+            } catch {
                 return 1;
             }
         }
 
         monedaSelect.addEventListener("change", async () => {
-            if (monedaSelect.value !== "MXN") {
-                const tipo = await obtenerTipoCambio();
-                tipoCambioInput.value = tipo.toFixed(2);
-                calcularPesosTotales();
-            } else {
-                tipoCambioInput.value = "1.00";
-                calcularPesosTotales();
-            }
+            tipoCambioInput.value = monedaSelect.value === "USD"
+                ? (await obtenerTipoCambio()).toFixed(2)
+                : "1.00";
+            calcularPesosTotales();
         });
 
         function calcularPesosTotales() {
@@ -278,27 +143,26 @@
 
         document.getElementById("subtotal").addEventListener("input", calcularPesosTotales);
 
-        // Cargar datos para selects
-        const entidades = [
+        // cargar selects
+        const selects = [
             { campo: "familia", idKey: "id_familia", textKey: "familia" },
             { campo: "responsable", idKey: "id_responsable", textKey: "responsable" },
             { campo: "extPresupuesto", idKey: "id_extpresupuesto", textKey: "ext_presupuesto" }
         ];
 
-        for (const entidad of entidades) {
-            const res = await fetch(`/api/${entidad.campo}`);
+        for (const s of selects) {
+            const res = await fetch(`/api/${s.campo}`);
             const data = await res.json();
-            const select = document.getElementById(entidad.campo);
-            data.forEach(item => {
-                const opt = document.createElement("option");
-                opt.value = item[entidad.idKey];
-                opt.textContent = item[entidad.textKey];
-                select.appendChild(opt);
+            const sel = document.getElementById(s.campo);
+            data.forEach(opt => {
+                const o = document.createElement("option");
+                o.value = opt[s.idKey];
+                o.textContent = opt[s.textKey];
+                sel.appendChild(o);
             });
         }
 
-
-        // Parsear XML (simulación)
+        // Parseo del archivo XML
         document.getElementById("archivo").addEventListener("change", function (e) {
             const archivo = e.target.files[0];
             if (archivo && archivo.name.endsWith(".xml")) {
@@ -306,23 +170,66 @@
                 reader.onload = function () {
                     const parser = new DOMParser();
                     const xml = parser.parseFromString(reader.result, "application/xml");
-                    document.getElementById("cantidad").value = xml.querySelector("cantidad")?.textContent || "";
-                    document.getElementById("pu").value = xml.querySelector("precioUnitario")?.textContent || "";
-                    document.getElementById("subtotal").value = xml.querySelector("subtotal")?.textContent || "";
-                    document.getElementById("iva").value = xml.querySelector("iva")?.textContent || "";
-                    document.getElementById("total").value = xml.querySelector("total")?.textContent || "";
+                    const nsCfdi = "http://www.sat.gob.mx/cfd/4";
+                    const nsTfd = "http://www.sat.gob.mx/TimbreFiscalDigital";
+
+                    const comprobante = xml.getElementsByTagNameNS(nsCfdi, "Comprobante")[0];
+                    const conceptos = xml.getElementsByTagNameNS(nsCfdi, "Concepto");
+                    const traslado = xml.getElementsByTagNameNS(nsCfdi, "Traslado")[0];
+                    const timbre = xml.getElementsByTagNameNS(nsTfd, "TimbreFiscalDigital")[0];
+
+                    if (comprobante) {
+                        document.getElementById("factura").value = comprobante.getAttribute("Folio") || "";
+                        const fecha = comprobante.getAttribute("Fecha") || "";
+                        if (fecha) document.getElementById("fecha").value = fecha.split("T")[0];
+                        document.getElementById("subtotal").value = comprobante.getAttribute("SubTotal") || "";
+                        document.getElementById("total").value = comprobante.getAttribute("Total") || "";
+                    }
+
+                    if (timbre) {
+                        document.getElementById("folio_fiscal").value = timbre.getAttribute("UUID") || "";
+                    }
+
+                    let match = null;
+                    const descOrden = document.getElementById("descOC")?.textContent.trim().toLowerCase();
+
+                    for (let i = 0; i < conceptos.length; i++) {
+                        const descXml = conceptos[i].getAttribute("Descripcion")?.toLowerCase();
+                        if (descXml && descOrden && descXml.includes(descOrden)) {
+                            match = conceptos[i];
+                            break;
+                        }
+                    }
+
+                    if (!match && conceptos.length > 0) {
+                        match = conceptos[0];
+                    }
+
+                    if (match) {
+                        document.getElementById("cantidad").value = match.getAttribute("Cantidad") || "";
+                        document.getElementById("pu").value = match.getAttribute("ValorUnitario") || "";
+                    }
+
+                    if (traslado) {
+                        const tasa = traslado.getAttribute("TasaOCuota") || "0";
+                        document.getElementById("iva_porc").value = Math.round(parseFloat(tasa) * 100);
+                    }
+
                     calcularPesosTotales();
                 };
                 reader.readAsText(archivo);
             }
         });
 
-        // Guardar formulario
         document.getElementById("llenadoForm").addEventListener("submit", async function (e) {
             e.preventDefault();
             const datos = Object.fromEntries(new FormData(e.target));
 
-            const res = await fetch("/api/llenado", {
+            // Asegurar que ID y orden_compra estén incluidos
+            datos.id = id;
+            datos.orden_compra = orden;
+
+            const res = await fetch("/llenadoG", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(datos)

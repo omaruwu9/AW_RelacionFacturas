@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "llenado")
@@ -12,11 +13,16 @@ public class Llenado {
 
     @Column(name = "orden_compra")
     private String ordenCompra;
-    private Short cantidad;
+
+    private String factura;
+    private LocalDate fecha;
+    private String folio_fiscal;
+
+    private Double cantidad;
     private String moneda;
     private Double pu;
     private Double subtotal;
-    private Short iva_porc;
+    private Double iva_porc;
     private Double total;
     private Double tipo_cambio;
     private Double pesos_totales;
@@ -32,8 +38,17 @@ public class Llenado {
     public String getOrdenCompra() { return ordenCompra; }
     public void setOrdenCompra(String ordenCompra) { this.ordenCompra = ordenCompra; }
 
-    public Short getCantidad() { return cantidad; }
-    public void setCantidad(Short cantidad) { this.cantidad = cantidad; }
+    public String getFactura() { return factura; }
+    public void setFactura(String factura) { this.factura = factura; }
+
+    public LocalDate getFecha() { return fecha; }
+    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
+
+    public String getFolio_fiscal() { return folio_fiscal; }
+    public void setFolio_fiscal(String folio_fiscal) { this.folio_fiscal = folio_fiscal; }
+
+    public Double getCantidad() { return cantidad; }
+    public void setCantidad(Double cantidad) { this.cantidad = cantidad; }
 
     public String getMoneda() { return moneda; }
     public void setMoneda(String moneda) { this.moneda = moneda; }
@@ -44,8 +59,8 @@ public class Llenado {
     public Double getSubtotal() { return subtotal; }
     public void setSubtotal(Double subtotal) { this.subtotal = subtotal; }
 
-    public Short getIva_porc() { return iva_porc; }
-    public void setIva_porc(Short iva_porc) { this.iva_porc = iva_porc; }
+    public Double getIva_porc() { return iva_porc; }
+    public void setIva_porc(Double iva_porc) { this.iva_porc = iva_porc; }
 
     public Double getTotal() { return total; }
     public void setTotal(Double total) { this.total = total; }

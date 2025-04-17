@@ -6,14 +6,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LlenadoService {
-    private final LlenadoRepository llenadoRepository;
 
-    public LlenadoService(LlenadoRepository llenadoRepository) {
-        this.llenadoRepository = llenadoRepository;
+    private final LlenadoRepository repository;
+
+    public LlenadoService(LlenadoRepository repository) {
+        this.repository = repository;
     }
 
-    public Llenado guardarLlenado(Llenado llenado) {
-        return llenadoRepository.save(llenado);
+    public Llenado guardar(Llenado llenado) {
+        return repository.save(llenado);
     }
 }
-
