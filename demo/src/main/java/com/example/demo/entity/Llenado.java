@@ -11,8 +11,8 @@ public class Llenado {
     @Id
     private Integer id;
 
-    @Column(name = "orden_compra")
-    private String ordenCompra;
+//    @Column(name = "orden_compra")
+//    private String ordenCompra;
 
     private String factura;
     private LocalDate fecha;
@@ -35,8 +35,8 @@ public class Llenado {
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
-    public String getOrdenCompra() { return ordenCompra; }
-    public void setOrdenCompra(String ordenCompra) { this.ordenCompra = ordenCompra; }
+//    public String getOrdenCompra() { return ordenCompra; }
+//    public void setOrdenCompra(String ordenCompra) { this.ordenCompra = ordenCompra; }
 
     public String getFactura() { return factura; }
     public void setFactura(String factura) { this.factura = factura; }

@@ -132,25 +132,24 @@
     <h2>Órdenes de Compra</h2>
 
     <div class="filtros">
-        <input type="text" id="filtroSolicitud" placeholder="Buscar Solicitud OC">
+        <input type="hidden" id="filtroSolicitud" placeholder="Buscar Solicitud OC">
         <input type="text" id="filtroOrden" placeholder="Buscar Orden Compra">
         <input type="text" id="filtroCentro" placeholder="Buscar Centro de Costos">
-        <input type="date" id="filtroFecha">
+        <input type="hidden" id="filtroFecha">
     </div>
 
-    <table>
+    <table id="tabla">
         <thead>
         <tr>
-            <th>Solicitud OC</th>
-            <th>Fecha Requerida</th>
-            <th>Orden Compra</th>
-            <th>Fecha OC</th>
-            <th>Descripcion OC</th>
-            <th>Centro de Costos</th>
-            <th>Cuenta Contable</th>
-            <th>Descripción</th>
-            <th>Proveedor</th>
-            <th>Estado</th>
+            <th onclick="ordenarTabla(0)">Orden Compra</th>
+            <th onclick="ordenarTabla(1)">Fecha Emision</th>
+            <th onclick="ordenarTabla(2)">Fecha Orden</th>
+            <th onclick="ordenarTabla(3)">Descripcion OC</th>
+            <th onclick="ordenarTabla(4)">Centro de Costos</th>
+            <th onclick="ordenarTabla(5)">Cuenta Contable</th>
+            <th onclick="ordenarTabla(6)">Descripción</th>
+            <th onclick="ordenarTabla(7)">Proveedor</th>
+            <th onclick="ordenarTabla(8)">Estado</th>
         </tr>
         </thead>
         <tbody id="tablaBody"></tbody>
@@ -161,6 +160,35 @@
     &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
 </footer>
 
+
+<!-- PARA EL ORDEN ASC, DEC DE LAS COLUMNAS -->
+<script>
+    let ordenAscendente = [];
+
+    function ordenarTabla(columna) {
+        const tabla = document.getElementById("tabla");
+        const filas = Array.from(tabla.rows).slice(1); // quitar encabezado
+        const esAsc = ordenAscendente[columna] = !ordenAscendente[columna]; // alternar orden
+
+        filas.sort((a, b) => {
+            let x = a.cells[columna].innerText;
+            let y = b.cells[columna].innerText;
+
+            // Convertir a número si aplica
+            x = isNaN(x) ? x : parseFloat(x);
+            y = isNaN(y) ? y : parseFloat(y);
+
+            return esAsc ? (x > y ? 1 : -1) : (x < y ? 1 : -1);
+        });
+
+        const tbody = tabla.tBodies[0];
+        tbody.innerHTML = "";
+        filas.forEach(f => tbody.appendChild(f));
+    }
+</script>
+
+
+<!-- El script que carga los datos, etc -->
 <script>
     function filtrarFilas(data) {
         const solicitud = document.getElementById("filtroSolicitud").value.toLowerCase();
@@ -179,20 +207,30 @@
     function cargarTabla(data) {
         const tbody = document.getElementById("tablaBody");
         tbody.innerHTML = "";
+
+        const estadosMap = {
+            "O": "Cancelado",
+            "I": "Backorder",
+            "R": "Recibida",
+            "E": "Tránsito",
+            "P": "Por aprobar",
+            "A": "Planeada",
+            "U": "Cerrada"
+        };
+
         data.forEach(item => {
             const tr = document.createElement("tr");
             tr.onclick = () => window.location.href = `/llenado/${item.id}`;
             tr.innerHTML = `
-                <td>${item.solicitudOc}</td>
-                <td>${item.fechaRequerida}</td>
                 <td>${item.ordenCompra}</td>
-                <td>${item.fecha}</td> <!-- Esto debe coincidir -->
+                <td>${item.fecha_emision}</td> <!-- Esto debe coincidir -->
+                <td>${item.fecha_orden}</td>
                 <th>${item.descripcion}</th>
                 <td>${item.centroCosto}</td>
                 <td>${item.cuentaContable}</td>
                 <td>${item.descCuentaContable}</td>
                 <td>${item.nombreProveedor}</td>
-                <td>${item.estado}</td>
+                <td>${estadosMap[item.estado] || "Desconocido"}</td>
             `;
             tbody.appendChild(tr);
         });
@@ -216,5 +254,9 @@
             .catch(error => console.error("Error al obtener las órdenes de compra:", error));
     });
 </script>
+
+
+
+
 </body>
 </html>

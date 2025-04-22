@@ -2,7 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 
-import java.security.Timestamp;
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,10 +23,13 @@ public class OrdenCompra {
     private String solicitudOc;
 
     @Column(name = "fecha_requerida")
-    private LocalDateTime fechaRequerida;
+    private Date fechaRequerida;
 
-    @Column(name = "fecha")
-    private LocalDateTime fecha;
+    @Column(name = "fecha_emision")
+    private Date fecha_emision;
+
+    @Column(name = "fecha_orden")
+    private Date fecha_orden;
 
     @Column(name = "centro_costo")
     private String centroCosto;
@@ -76,20 +79,28 @@ public class OrdenCompra {
         this.solicitudOc = solicitudOc;
     }
 
-    public LocalDateTime getFechaRequerida() {
+    public Date getFechaRequerida() {
         return fechaRequerida;
     }
 
-    public void setFechaRequerida(LocalDateTime fechaRequerida) {
+    public void setFechaRequerida(Date fechaRequerida) {
         this.fechaRequerida = fechaRequerida;
     }
 
-    public LocalDateTime getFecha() {
-        return fecha;
+    public Date getFecha_emision() {
+        return fecha_emision;
     }
 
-    public void setFecha(LocalDateTime fecha) {
-        this.fecha = fecha;
+    public void setFecha_emision(Date fecha) {
+        this.fecha_emision = fecha;
+    }
+
+    public Date getFecha_orden() {
+        return fecha_orden;
+    }
+
+    public void setFecha_orden(Date fecha_requeridaOC) {
+        this.fecha_orden = fecha_requeridaOC;
     }
 
     public String getCentroCosto() {

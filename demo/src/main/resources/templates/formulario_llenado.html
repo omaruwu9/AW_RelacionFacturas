@@ -17,6 +17,33 @@
         label { font-weight: 600; }
         input, select { padding: 10px; border-radius: 6px; border: 1px solid #555; background-color: #2c2c2c; color: #f4f4f4; }
         button[type="submit"] { background-color: #e74c3c; color: white; border: none; padding: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 200px; margin: 0 auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #121212;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #2a2a2a;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #1f1f1f;
+            color: #ff4c4c;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background-color: #262626;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -32,24 +59,57 @@
 <div class="container">
     <h2>Llenado de Orden de Compra</h2>
 
-    <div class="info-orden">
-        <p><strong>Solicitud OC:</strong> <span th:text="${orden.solicitudOc}">-</span></p>
-        <p><strong>Fecha Requerida:</strong> <span th:text="${orden.fechaRequerida}">-</span></p>
-        <p><strong>Orden de Compra:</strong> <span th:text="${orden.ordenCompra}">-</span></p>
-        <p><strong>Descripción OC:</strong> <span id="descOC" th:text="${orden.descripcion}">-</span></p>
-        <p><strong>Centro de Costo:</strong> <span th:text="${orden.centroCosto}">-</span></p>
-        <p><strong>Cuenta Contable:</strong> <span th:text="${orden.cuentaContable}">-</span></p>
-        <p><strong>Descripción:</strong> <span th:text="${orden.descCuentaContable}">-</span></p>
-        <p><strong>Proveedor:</strong> <span th:text="${orden.nombreProveedor}">-</span></p>
-        <p><strong>Estado:</strong> <span th:text="${orden.estado}">-</span></p>
-    </div>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+        <tbody>
+        <tr>
+            <td><strong>Solicitud OC:</strong></td>
+            <td><span th:text="${orden.solicitudOc}">-</span></td>
+            <td><strong>Fecha Requerida:</strong></td>
+            <td><span th:text="${orden.fechaRequerida}">-</span></td>
+        </tr>
+        <tr>
+            <td><strong>Orden de Compra:</strong></td>
+            <td><span id="ordenCompraTexto" th:text="${orden.ordenCompra}">-</span></td>
+            <td><strong>Descripción:</strong></td>
+            <td><span id="ordenCompraDesc" th:text="${orden.descripcion}">-</span></td>
+        </tr>
+        <tr>
+            <td><strong>Cuenta Contable:</strong></td>
+            <td><span th:text="${orden.cuentaContable}">-</span></td>
+            <td><strong>Descripción:</strong></td>
+            <td><span th:text="${orden.descCuentaContable}">-</span></td>
+        </tr>
+        <tr>
+            <td><strong>Centro de Costo:</strong></td>
+            <td><span th:text="${orden.centroCosto}">-</span></td>
+            <td><strong>Proveedor:</strong></td>
+            <td><span th:text="${orden.nombreProveedor}">-</span></td>
+        </tr>
+        <tr>
+            <td><strong>Estado:</strong></td>
+            <td><span th:text="${orden.estado}">-</span></td>
+            <td><strong></strong></td>
+            <td><span></span></td>
+        </tr>
+        </tbody>
+    </table>
+
 
     <form id="llenadoForm">
         <input type="hidden" id="id" name="id">
+
         <input type="hidden" id="orden_compra" name="orden_compra">
 
         <label for="archivo">Cargar archivo (XML/PDF):</label>
         <input type="file" id="archivo" accept=".xml,.pdf" class="full-width">
+
+        <label for="claveProdServ">Clave Producto / Servicio</label>
+        <select id="claveProdServ" class="full-width">
+            <option value="">Seleccione una opción</option>
+        </select>
+
+        <label for="descProducto">Descripción del Producto</label>
+        <input type="text" id="descProducto" readonly>
 
         <label for="factura">Número de Factura</label>
         <input type="text" id="factura" name="factura">
@@ -110,37 +170,34 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", async function () {
-        const id = new URLSearchParams(window.location.search).get("id");
-        const orden = new URLSearchParams(window.location.search).get("orden");
+        const conceptosMap = {};
+
+        // 🔹 Recuperar ID desde la URL
+        const id = window.location.pathname.split("/").pop();
         document.getElementById("id").value = id;
-        document.getElementById("orden_compra").value = orden;
 
-        const tipoCambioInput = document.getElementById("tipo_cambio");
-        const monedaSelect = document.getElementById("moneda");
+        const ordenCompraValor = document.getElementById("ordenCompraTexto")?.textContent?.trim();
+        document.getElementById("orden_compra").value = ordenCompraValor || "";
 
-        async function obtenerTipoCambio() {
-            try {
-                const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=MXN");
-                const data = await res.json();
-                return data.rates.MXN;
-            } catch {
-                return 1;
-            }
-        }
 
-        monedaSelect.addEventListener("change", async () => {
-            tipoCambioInput.value = monedaSelect.value === "USD"
-                ? (await obtenerTipoCambio()).toFixed(2)
-                : "1.00";
-            calcularPesosTotales();
-        });
-
+        // Función para calcular pesos totales
         function calcularPesosTotales() {
             const subtotal = parseFloat(document.getElementById("subtotal").value || 0);
-            const tipoCambio = parseFloat(tipoCambioInput.value || 1);
-            document.getElementById("pesosTotales").value = (subtotal * tipoCambio).toFixed(2);
+            const moneda = document.getElementById("moneda").value;
+            let tipoCambio = parseFloat(document.getElementById("tipo_cambio").value || 1);
+
+            if (moneda === "MXN") {
+                tipoCambio = 1.00;
+                document.getElementById("tipo_cambio").value = "1.00";
+            }
+
+            const pesosTotales = subtotal * tipoCambio;
+            document.getElementById("pesosTotales").value = pesosTotales.toFixed(2);
         }
 
+        // Recalcular cuando se cambia moneda o tipo de cambio
+        document.getElementById("moneda").addEventListener("change", calcularPesosTotales);
+        document.getElementById("tipo_cambio").addEventListener("input", calcularPesosTotales);
         document.getElementById("subtotal").addEventListener("input", calcularPesosTotales);
 
         // cargar selects
@@ -162,7 +219,6 @@
             });
         }
 
-        // Parseo del archivo XML
         document.getElementById("archivo").addEventListener("change", function (e) {
             const archivo = e.target.files[0];
             if (archivo && archivo.name.endsWith(".xml")) {
@@ -174,50 +230,69 @@
                     const nsTfd = "http://www.sat.gob.mx/TimbreFiscalDigital";
 
                     const comprobante = xml.getElementsByTagNameNS(nsCfdi, "Comprobante")[0];
-                    const conceptos = xml.getElementsByTagNameNS(nsCfdi, "Concepto");
-                    const traslado = xml.getElementsByTagNameNS(nsCfdi, "Traslado")[0];
                     const timbre = xml.getElementsByTagNameNS(nsTfd, "TimbreFiscalDigital")[0];
+                    const conceptos = xml.getElementsByTagNameNS(nsCfdi, "Concepto");
 
+                    // Datos generales
                     if (comprobante) {
                         document.getElementById("factura").value = comprobante.getAttribute("Folio") || "";
                         const fecha = comprobante.getAttribute("Fecha") || "";
                         if (fecha) document.getElementById("fecha").value = fecha.split("T")[0];
                         document.getElementById("subtotal").value = comprobante.getAttribute("SubTotal") || "";
                         document.getElementById("total").value = comprobante.getAttribute("Total") || "";
+                        document.getElementById("tipo_cambio").value = comprobante.getAttribute("TipoCambio") || "1.00";
                     }
 
                     if (timbre) {
                         document.getElementById("folio_fiscal").value = timbre.getAttribute("UUID") || "";
                     }
 
-                    let match = null;
-                    const descOrden = document.getElementById("descOC")?.textContent.trim().toLowerCase();
-
-                    for (let i = 0; i < conceptos.length; i++) {
-                        const descXml = conceptos[i].getAttribute("Descripcion")?.toLowerCase();
-                        if (descXml && descOrden && descXml.includes(descOrden)) {
-                            match = conceptos[i];
-                            break;
+                    // Cargar conceptos al select
+                    const select = document.getElementById("claveProdServ");
+                    select.innerHTML = '<option value="">Seleccione una opción</option>';
+                    for (let concepto of conceptos) {
+                        const clave = concepto.getAttribute("ClaveProdServ");
+                        const descripcion = concepto.getAttribute("Descripcion");
+                        if (clave && descripcion) {
+                            conceptosMap[clave] = {
+                                descripcion,
+                                cantidad: concepto.getAttribute("Cantidad"),
+                                valorUnitario: concepto.getAttribute("ValorUnitario"),
+                                importe: concepto.getAttribute("Importe"),
+                                traslado: concepto.getElementsByTagNameNS(nsCfdi, "Traslado")[0]
+                            };
+                            const option = document.createElement("option");
+                            option.value = clave;
+                            option.textContent = `${clave} - ${descripcion}`;
+                            select.appendChild(option);
                         }
                     }
-
-                    if (!match && conceptos.length > 0) {
-                        match = conceptos[0];
-                    }
-
-                    if (match) {
-                        document.getElementById("cantidad").value = match.getAttribute("Cantidad") || "";
-                        document.getElementById("pu").value = match.getAttribute("ValorUnitario") || "";
-                    }
-
-                    if (traslado) {
-                        const tasa = traslado.getAttribute("TasaOCuota") || "0";
-                        document.getElementById("iva_porc").value = Math.round(parseFloat(tasa) * 100);
-                    }
-
-                    calcularPesosTotales();
                 };
                 reader.readAsText(archivo);
+            }
+        });
+
+
+        // Evento cuando seleccionas una claveProdServ
+        document.getElementById("claveProdServ").addEventListener("change", function () {
+            const clave = this.value;
+            const concepto = conceptosMap[clave];
+            if (concepto) {
+                document.getElementById("descProducto").value = concepto.descripcion;
+                document.getElementById("cantidad").value = concepto.cantidad || "";
+                document.getElementById("pu").value = concepto.valorUnitario || "";
+                document.getElementById("subtotal").value = concepto.importe || "";
+
+                // Calcular IVA y Total
+                const subtotal = parseFloat(concepto.importe || "0");
+                const iva = subtotal * 0.16;
+                const total = subtotal + iva;
+
+                document.getElementById("iva_porc").value = 16;
+                document.getElementById("total").value = total.toFixed(2);
+
+                // Recalcular pesos totales después de llenar campos
+                calcularPesosTotales();
             }
         });
 
@@ -227,7 +302,8 @@
 
             // Asegurar que ID y orden_compra estén incluidos
             datos.id = id;
-            datos.orden_compra = orden;
+            const ordenCompraTexto = document.getElementById("ordenCompraTexto")?.textContent?.trim();
+            datos.orden_compra = ordenCompraTexto || "";
 
             const res = await fetch("/llenadoG", {
                 method: "POST",
@@ -244,5 +320,7 @@
         });
     });
 </script>
+
+
 </body>
 </html>
