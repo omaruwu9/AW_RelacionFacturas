@@ -2,66 +2,184 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio de Sesión - Promex</title>
+    <title>Login - Promex</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
     <style>
-        body {background-color: #0f0f0f; color: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; align-items: center; justify-content: center;}
-        .login-container {background-color: #1b1b1b; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); width: 100%; max-width: 420px; text-align: center;}
-        .login-container img {max-width: 220px; margin-bottom: 20px;}
-        h1 {font-size: 26px; color: #e60012; margin-bottom: 20px;}
-        input[type="text"], input[type="password"], input[type="email"] {width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #333; border-radius: 5px; background-color: #111; color: #f4f4f4; font-size: 15px;}
-        input[type="text"] {text-transform: uppercase;}
-        button {background-color: #e60012; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; margin-top: 10px; width: 100%; font-weight: bold;}
-        button:hover {background-color: #b3000e;}
-        #errorMensaje {color: #ff4c4c; margin-top: 10px; font-size: 14px;}
-        .register-link {margin-top: 20px; font-size: 14px; color: #e60012; cursor: pointer;}
-        .modal {display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); justify-content: center;align-items: center;}
-        .modal-content {background-color: #1b1b1b; padding: 30px; border-radius: 10px; width: 100%; max-width: 420px; box-shadow: 0 6px 20px rgba(0,0,0,0.6); position: relative;}
-        .close {color: #ffffff; position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer;}
-        footer {position: fixed; bottom: 0; width: 100%; background-color: #161616; color: #ccc; text-align: center; padding: 12px 0; font-size: 14px; border-top: 1px solid #2a2a2a;}
+        body {
+            background-color: #0f0f0f;
+            font-family: 'Segoe UI', sans-serif;
+            color: #f4f4f4;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .section {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-3d-wrap {
+            width: 650px;
+            height: 700px;
+            perspective: 1000px;
+        }
+
+        .card-3d-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+        }
+
+        .card-front,
+        .card-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            background-color: #1b1b1b;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+            padding: 50px 40px;
+            backface-visibility: hidden;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        .checkbox {
+            display: none;
+        }
+
+        .checkbox:checked ~ .card-3d-wrap .card-3d-wrapper {
+            transform: rotateY(180deg);
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .form-style {
+            width: 100%;
+            padding: 15px 15px 15px 40px;
+            background-color: #111;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 14px;
+            left: 12px;
+            color: #e60012;
+            font-size: 18px;
+        }
+
+        button {
+            background-color: #e60012;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #b3000e;
+        }
+
+        .link {
+            color: #e60012;
+            font-size: 15px;
+            margin-top: 20px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        img {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #161616;
+            color: #ccc;
+            text-align: center;
+            padding: 12px 0;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
-<div class="login-container">
-    <img src="/images/PROGEN_SIN-FONDO.png" alt="Promex Logo">
-    <h1>Inicio de Sesión</h1>
-    <form th:action="@{/login}" method="post">
-        <input type="text" name="username" placeholder="No. nómina" required>
-        <input type="password" name="password" placeholder="Contraseña" required>
-        <button type="submit">Iniciar Sesión</button>
-        <p id="errorMensaje" th:if="${param.error}" style="display:block;">Credenciales incorrectas</p>
-    </form>
-    <div class="register-link" onclick="document.getElementById('registerModal').style.display='flex'">
-        ¿No tienes cuenta? Regístrate aquí
-    </div>
-</div>
+<div class="section">
+    <input class="checkbox" type="checkbox" id="reg-log" name="reg-log"/>
+    <div class="card-3d-wrap">
+        <div class="card-3d-wrapper">
+            <!-- LOGIN -->
+            <div class="card-front">
+                <div class="text-center">
+                    <img src="/images/PROGEN_SIN-FONDO.png" alt="Logo Promex">
+                    <h4 class="mb-4" style="color: #e60012;">Iniciar Sesión</h4>
+                    <form th:action="@{/login}" method="post">
+                        <div class="form-group">
+                            <i class="input-icon uil uil-at"></i>
+                            <input type="text" name="username" placeholder="No. Nómina" class="form-style" required>
+                        </div>
+                        <div class="form-group">
+                            <i class="input-icon uil uil-lock-alt"></i>
+                            <input type="password" name="password" placeholder="Contraseña" class="form-style" required>
+                        </div>
+                        <p id="errorMensaje" th:if="${param.error}" style="color: #ff4c4c;">Credenciales incorrectas</p>
+                        <button type="submit">Iniciar Sesión</button>
+                        <p class="link" onclick="document.getElementById('reg-log').checked = true">¿No tienes cuenta? Regístrate</p>
+                    </form>
+                </div>
+            </div>
 
-<div class="modal" id="registerModal">
-    <div class="modal-content">
-        <span class="close" onclick="document.getElementById('registerModal').style.display='none'">&times;</span>
-        <h2 style="color: #e60012;">Registrar Nuevo Usuario</h2>
-        <form id="formRegistro" th:action="@{/registro}" method="post">
-            <input type="text" name="nomina" placeholder="No. nómina" required>
-            <input type="email" name="email" placeholder="Correo electrónico" required>
-            <input type="password" name="password" placeholder="Contraseña" required>
-            <button type="submit">Registrar</button>
-        </form>
+            <!-- REGISTRO -->
+            <div class="card-back">
+                <div class="text-center">
+                    <img src="/images/PROGEN_SIN-FONDO.png" alt="Logo Promex">
+                    <h4 class="mb-4" style="color: #e60012;">Registro</h4>
+                    <form th:action="@{/registro}" method="post">
+                        <div class="form-group">
+                            <i class="input-icon uil uil-user"></i>
+                            <input type="text" name="nomina" placeholder="No. Nómina" class="form-style" required>
+                        </div>
+                        <div class="form-group">
+                            <i class="input-icon uil uil-envelope"></i>
+                            <input type="email" name="email" placeholder="Correo electrónico" class="form-style" required>
+                        </div>
+                        <div class="form-group">
+                            <i class="input-icon uil uil-lock-alt"></i>
+                            <input type="password" name="password" placeholder="Contraseña" class="form-style" required>
+                        </div>
+                        <button type="submit">Registrar</button>
+                        <p class="link" onclick="document.getElementById('reg-log').checked = false">¿Ya tienes cuenta? Inicia sesión</p>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <footer>
-    <p>&copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.</p>
+    &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
 </footer>
-
-<script>
-    const formRegistro = document.getElementById("formRegistro");
-    if (formRegistro) {
-        formRegistro.addEventListener('submit', function (e) {
-            console.log("Formulario de registro enviado desde modal");
-        });
-    } else {
-        console.log("Formulario de registro NO encontrado");
-    }
-</script>
 </body>
 </html>
