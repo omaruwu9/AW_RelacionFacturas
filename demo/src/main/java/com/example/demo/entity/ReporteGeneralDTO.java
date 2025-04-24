@@ -1,9 +1,10 @@
 package com.example.demo.entity;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+
+import java.sql.Date;
+import java.time.format.DateTimeFormatter;
 
 public class ReporteGeneralDTO {
     private String solicitudOc;
@@ -76,32 +77,51 @@ public class ReporteGeneralDTO {
         return obj != null ? Double.parseDouble(obj.toString()) : null;
     }
 
-    public void llenarRow(Row row) {
-        row.createCell(0).setCellValue(solicitudOc);
-        row.createCell(1).setCellValue(fechaRequerida);
-        row.createCell(2).setCellValue(descripcion);
-        row.createCell(3).setCellValue(ordenCompra);
-        row.createCell(4).setCellValue(fechaOrden);
-        row.createCell(5).setCellValue(fechaEmision);
-        row.createCell(6).setCellValue(centroCostos);
-        row.createCell(7).setCellValue(cuentaContable);
-        row.createCell(8).setCellValue(descripcionCuentaContable);
-        row.createCell(9).setCellValue(proveedor);
-        row.createCell(10).setCellValue(fechaFactura);
-        row.createCell(11).setCellValue(factura);
-        row.createCell(12).setCellValue(folioFiscal);
-        row.createCell(13).setCellValue(cantidad != null ? cantidad : 0);
-        row.createCell(14).setCellValue(polizaGarantia);
-        row.createCell(15).setCellValue(familia);
-        row.createCell(16).setCellValue(responsable);
-        row.createCell(17).setCellValue(extPresupuesto);
-        row.createCell(18).setCellValue(moneda);
-        row.createCell(19).setCellValue(pu != null ? pu : 0);
-        row.createCell(20).setCellValue(subtotal != null ? subtotal : 0);
-        row.createCell(21).setCellValue(ivaPorc != null ? ivaPorc : 0);
-        row.createCell(22).setCellValue(total != null ? total : 0);
-        row.createCell(23).setCellValue(tipoCambio != null ? tipoCambio : 0);
-        row.createCell(24).setCellValue(pesosTotales != null ? pesosTotales : 0);
-        row.createCell(25).setCellValue(estatus);
+    public void llenarRow(Row row, CellStyle style) {
+        int i = 0;
+        row.createCell(i++).setCellValue(solicitudOc);
+        row.createCell(i++).setCellValue(formatDate(fechaRequerida));
+        row.createCell(i++).setCellValue(descripcion);
+        row.createCell(i++).setCellValue(ordenCompra);
+        row.createCell(i++).setCellValue(formatDate(fechaOrden));
+        row.createCell(i++).setCellValue(formatDate(fechaEmision));
+        row.createCell(i++).setCellValue(centroCostos);
+        row.createCell(i++).setCellValue(cuentaContable);
+        row.createCell(i++).setCellValue(descripcionCuentaContable);
+        row.createCell(i++).setCellValue(proveedor);
+        row.createCell(i++).setCellValue(formatDate(fechaFactura));
+        row.createCell(i++).setCellValue(factura);
+        row.createCell(i++).setCellValue(folioFiscal);
+        row.createCell(i++).setCellValue(cantidad);
+        row.createCell(i++).setCellValue(polizaGarantia);
+        row.createCell(i++).setCellValue(familia);
+        row.createCell(i++).setCellValue(responsable);
+        row.createCell(i++).setCellValue(extPresupuesto);
+        row.createCell(i++).setCellValue(moneda);
+        row.createCell(i++).setCellValue(pu.doubleValue());
+        row.createCell(i++).setCellValue(subtotal.doubleValue());
+        row.createCell(i++).setCellValue(ivaPorc);
+        row.createCell(i++).setCellValue(total.doubleValue());
+        row.createCell(i++).setCellValue(tipoCambio.doubleValue());
+        row.createCell(i++).setCellValue(pesosTotales.doubleValue());
+        row.createCell(i++).setCellValue(estatus);
+
+        for (int j = 0; j < i; j++) {
+            row.getCell(j).setCellStyle(style);
+        }
     }
+
+    private String formatDate(String dateStr) {
+        if (dateStr == null || dateStr.isEmpty()) return "";
+        try {
+            java.util.Date date = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
+            return new java.text.SimpleDateFormat("M/d/yyyy").format(date);
+        } catch (Exception e) {
+            return dateStr; // devuélvelo tal cual si no se puede convertir
+        }
+    }
+
+
+
+
 }

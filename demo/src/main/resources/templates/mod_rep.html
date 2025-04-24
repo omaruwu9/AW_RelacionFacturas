@@ -108,7 +108,6 @@
             color: #f4f4f4;
             border-radius: 12px;
             padding: 30px 40px;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
             max-width: 500px;
             width: 90%;
             position: relative;
@@ -219,15 +218,20 @@
 
         const anio = new Date().getFullYear();
         if (tipo === 'mensual') {
+            const nombresMeses = [
+                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+            ];
+
             contenedor.innerHTML = `
-                <label>Año:
-                    <input type="number" id="anio" value="${anio}" />
-                </label>
-                <label>Mes:
-                    <select id="mes">
-                        ${[...Array(12).keys()].map(m => `<option value="${m+1}">${m+1}</option>`).join('')}
-                    </select>
-                </label>`;
+        <label>Año:
+            <input type="number" id="anio" value="${anio}" />
+        </label>
+        <label>Mes:
+            <select id="mes">
+                ${nombresMeses.map((nombre, index) => `<option value="${index + 1}">${nombre}</option>`).join('')}
+            </select>
+        </label>`;
             contenedor.setAttribute("data-tipo", "mensual");
         } else if (tipo === 'semestral') {
             contenedor.innerHTML = `
