@@ -30,5 +30,4 @@ public class OrdenCompraService {
         return ordenCompraRepository.findById(id);
     }
 
-    // Puedes agregar más lógica aquí si necesitas hacer validaciones, conversiones, etc.
 }

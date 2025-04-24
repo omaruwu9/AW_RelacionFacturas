@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.FamiliaGrafica;
 import com.example.demo.entity.Llenado;
 import com.example.demo.entity.OrdenCompra;
+import com.example.demo.repository.LlenadoRepository;
 import com.example.demo.repository.OrdenCompraRepository;
 import com.example.demo.service.LlenadoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -58,6 +61,4 @@ public class LlenadoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el registro");
         }
     }
-
-
 }

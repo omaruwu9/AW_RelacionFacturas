@@ -3,7 +3,6 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 
 import java.sql.Date;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "orden_compra")
@@ -17,7 +16,7 @@ public class OrdenCompra {
     private String ordenCompra;
 
     @Column(name = "descripcion")
-    private String descripcion;
+    private String descripcionOC;
 
     @Column(name = "solicitud_oc")
     private String solicitudOc;
@@ -63,12 +62,12 @@ public class OrdenCompra {
         this.ordenCompra = ordenCompra;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public String getDescripcionOC() {
+        return descripcionOC;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setDescripcionOC(String descripcion) {
+        this.descripcionOC = descripcion;
     }
 
     public String getSolicitudOc() {

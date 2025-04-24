@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Principal - Promex</title>
+    <style>
+        html, body {margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f0f0f; color: #f4f4f4; height: 100%;}
+        body {display: flex; flex-direction: column;}
+        header {background-color: #161616; padding: 20px 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e60012; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);}
+        header img {max-height: 60px;}
+        #botones button {background-color: #e60012;color: white;border: none;padding: 10px 30px;border-radius: 5px;font-size: 15px;font-weight: 600;cursor: pointer;margin-left: 12px;transition: all 0.3s ease;}
+        #botones button:hover {background-color: #b3000e;}
+        .main-content {flex: 1;padding: 50px 60px;max-width: 1300px;margin: 30px auto;background-color: #1b1b1b;border-radius: 12px;box-shadow: 0 10px 30px rgba(0,0,0,0.5); float: left; }
+        .contenido-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 40px;
+        }
+
+        .botones-derecha {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-width: 200px;
+        }
+
+        .botones-derecha button {
+            padding: 12px 20px;
+            background-color: #e60012;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .botones-derecha button:hover {
+            background-color: #b3000e;
+        }
+
+        h1 {font-size: 36px; margin-bottom: 40px; color: #e60012; border-left: 6px solid #e60012; padding-left: 20px; text-align: left;}
+        table {width: 100%;border-collapse: collapse;background-color: #121212;border-radius: 8px;overflow: hidden;box-shadow: 0 2px 10px rgba(0,0,0,0.4);}
+        th, td {padding: 12px 15px;border-bottom: 1px solid #2a2a2a;text-align: left;font-size: 14px;}
+        th {background-color: #1f1f1f;color: #ff4c4c;text-transform: uppercase;font-size: 13px;}
+        tr:hover {background-color: #262626;cursor: pointer;}
+        footer {background-color: #161616; padding: 15px 0; text-align: center; font-size: 14px; color: #aaa; border-top: 1px solid #2a2a2a;}
+    </style>
+</head>
+<body>
+<header>
+    <img src="/images/promex-logo.png" alt="Promex Logo">
+    <div id="botones">
+        <button onclick="location.href='/dashboard'">Inicio</button>
+        <button onclick="location.href='/logout'">Cerrar Sesión</button>
+    </div>
+</header>
+
+<div class="main-content">
+    <div class="contenido-flex">
+        <table id="tablaFamilias">
+            <thead>
+            <tr>
+                <th>Familia</th>
+                <th>Total (Pesos)</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div class="botones-derecha">
+            <button onclick="alert('Botón 1')">Reporte mensual</button>
+            <button onclick="alert('Botón 2')">Reporte bimestral</button>
+            <button onclick="alert('Botón 3')">Reporte semestral</button>
+            <button onclick="alert('Botón 4')">Reporte anual</button>
+        </div>
+
+        <!-- LUGAR PARA EL GRAFICO DE ACUERDO A LA TABLA (PROBABLEMENTE 2, GRAFICOS) UNO DEL TOTAL EN PESOS Y EL OTRO EN EL CONTEO DE OC DE LAS FAMILIAS -->
+        <h2>Grafico</h2>
+    </div>
+</div>
+
+
+<!--<h3>Gráfica de Participación por Familia</h3>-->
+<!--<canvas id="graficaPastel" width="400" height="400"></canvas>-->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+
+<!-- RECUPERAR INFORMACIÓN PARA COLOCARLA EN LA TABLA -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/api/llenado/totales-por-familia")
+            .then(res => res.json())
+            .then(data => {
+                // Ordenar alfabéticamente por familia (de menor a mayor)
+                data.sort((a, b) => a.familia.localeCompare(b.familia, 'es', { numeric: true }));
+
+                const tbody = document.querySelector("#tablaFamilias tbody");
+                data.forEach(item => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${item.familia}</td>
+                        <td>$${parseFloat(item.total).toFixed(2)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(err => console.error("Error al cargar datos:", err));
+    });
+</script>
+
+<footer>
+    &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
+</footer>
+</body>
+</html>
