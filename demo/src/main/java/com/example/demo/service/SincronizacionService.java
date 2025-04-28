@@ -20,7 +20,7 @@ public class SincronizacionService {
     @Qualifier("postgresJdbcTemplate")
     private JdbcTemplate postgresJdbc;
 
-    @Scheduled(cron = "0 0 10 * * *") // Todos los días a las 10:00 AM
+    @Scheduled(cron = "0 35 10 * * *") // Todos los días a las 10:00 AM
     public void sincronizarOrdenesDeAyer() {
         String consultaSqlServer = """
             SELECT

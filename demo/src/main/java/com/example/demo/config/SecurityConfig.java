@@ -20,12 +20,14 @@ public class SecurityConfig {
 
     private final CustomAuthenticationProvider customAuthenticationProvider;
 
+    //filtro de seguridad para las olicitudes HTTP de la aplicació web
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authenticationProvider(customAuthenticationProvider)
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        //rutas publicas qu no requieren autorización
                         .requestMatchers(
                                 "/login",
                                 "/registro",
@@ -48,11 +50,13 @@ public class SecurityConfig {
         return http.build();
     }
 
+    //codificación de contraseñas utilizando el BCrypt
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    //AuthenticationManager, necesario para autenticar
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();

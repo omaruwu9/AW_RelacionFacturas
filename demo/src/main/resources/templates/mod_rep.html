@@ -4,10 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Principal - Promex</title>
-    <style>
-        html, body {background-color: #0f0f0f;font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;color: #f4f4f4;margin: 0;padding: 0;display: flex;flex-direction: column;min-height: 100vh;}
 
-        body { display: flex; flex-direction: column; }
+    <style>
+        html, body {
+            background-color: #0f0f0f;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
         header {
             background-color: #161616;
             padding: 20px 60px;
@@ -17,7 +26,11 @@
             border-bottom: 2px solid #e60012;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
-        header img { max-height: 60px; }
+
+        header img {
+            max-height: 60px;
+        }
+
         #botones button {
             background-color: #e60012;
             color: white;
@@ -30,7 +43,11 @@
             margin-left: 12px;
             transition: all 0.3s ease;
         }
-        #botones button:hover { background-color: #b3000e; }
+
+        #botones button:hover {
+            background-color: #b3000e;
+        }
+
         .main-content {
             flex: 1;
             padding: 50px 60px;
@@ -40,18 +57,68 @@
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
+
         .contenido-flex {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: flex-start;
             gap: 40px;
         }
+
+        .tabla-container {
+            flex: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #121212;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #2a2a2a;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #1f1f1f;
+            color: #ff4c4c;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background-color: #262626;
+            cursor: pointer;
+        }
+
+        .grafica-botones-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .grafica-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .botones-derecha {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            min-width: 200px;
+            align-items: center;
         }
+
         .botones-derecha button {
             padding: 12px 20px;
             background-color: #e60012;
@@ -63,31 +130,20 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-        .botones-derecha button:hover { background-color: #b3000e; }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #121212;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+
+        .botones-derecha button:hover {
+            background-color: #b3000e;
         }
-        th, td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #2a2a2a;
-            text-align: left;
+
+        footer {
+            background-color: #161616;
+            padding: 15px 0;
+            text-align: center;
             font-size: 14px;
+            color: #aaa;
+            border-top: 1px solid #2a2a2a;
         }
-        th {
-            background-color: #1f1f1f;
-            color: #ff4c4c;
-            text-transform: uppercase;
-            font-size: 13px;
-        }
-        tr:hover {
-            background-color: #262626;
-            cursor: pointer;
-        }
+
         .modal-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -142,20 +198,14 @@
             border-radius: 6px;
             font-size: 14px;
         }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
-        footer {
-            background-color: #161616;
-            padding: 15px 0;
-            text-align: center;
-            font-size: 14px;
-            color: #aaa;
-            border-top: 1px solid #2a2a2a;
-        }
     </style>
 </head>
+
 <body>
 <header>
     <img src="/images/promex-logo.png" alt="Promex Logo">
@@ -167,19 +217,32 @@
 
 <div class="main-content">
     <div class="contenido-flex">
-        <table id="tablaFamilias">
-            <thead>
-            <tr><th>Familia</th><th>Total (Pesos)</th></tr>
-            </thead>
-            <tbody></tbody>
-        </table>
 
-        <div class="botones-derecha">
-            <button onclick="abrirModal('mensual')">Reporte mensual</button>
-            <button onclick="abrirModal('semestral')">Reporte semestral</button>
+        <!-- Tabla de Familias -->
+        <div class="tabla-container">
+            <table id="tablaFamilias">
+                <thead>
+                <tr><th>Familia</th><th>Total (Pesos)</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
+
+        <!-- Gráfica + Botones -->
+        <div class="grafica-botones-container">
+            <div class="grafica-container">
+                <canvas id="barChart" width="600" height="600"></canvas>
+            </div>
+
+            <div class="botones-derecha">
+                <button onclick="abrirModal('mensual')">Reporte mensual</button>
+                <button onclick="abrirModal('semestral')">Reporte semestral</button>
+            </div>
+        </div>
+
     </div>
 
+    <!-- Modal -->
     <div class="modal-overlay" id="modalSeleccion">
         <div class="modal-contenido">
             <button class="modal-cerrar" onclick="cerrarModal()">×</button>
@@ -190,8 +253,78 @@
     </div>
 </div>
 
+<footer>
+    &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
+</footer>
+
+<!-- Librerías -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Script de la gráfica -->
+<script>
+    document.addEventListener('DOMContentLoaded', async function () {
+        try {
+            const response = await fetch('/api/grafica/polar-area');
+            const data = await response.json();
+
+            const labels = data.map(item => item.familia);
+            const values = data.map(item => item.total);
+
+            const ctx = document.getElementById('barChart').getContext('2d');
+            const barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total en Pesos',
+                        data: values,
+                        backgroundColor: [
+                            'rgba(230, 0, 18, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(230, 0, 18, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { labels: { color: 'white' } },
+                        tooltip: {
+                            backgroundColor: '#333',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: '#e60012',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: { ticks: { color: 'white' }, grid: { color: '#444' } },
+                        y: { ticks: { color: 'white' }, grid: { color: '#444' } }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error("Error al cargar la gráfica:", error);
+        }
+    });
+</script>
+
+<!-- Script para la tabla y generación de Excel -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // Cargar la tabla de totales por familia
         fetch("/api/llenado/totales-por-familia")
             .then(res => res.json())
             .then(data => {
@@ -206,12 +339,20 @@
             .catch(err => console.error("Error al cargar datos:", err));
     });
 
+    // Función para abrir el modal y mostrar inputs/selects
     function abrirModal(tipo) {
         const modal = document.getElementById("modalSeleccion");
         const contenedor = document.getElementById("contenedorInputs");
         modal.style.display = "flex";
 
-        const anio = new Date().getFullYear();
+        // Generar opciones de año dinámicamente
+        const anioActual = new Date().getFullYear();
+        let opcionesAnio = '';
+        for (let i = anioActual; i >= anioActual - 10; i--) {
+            opcionesAnio += `<option value="${i}">${i}</option>`;
+        }
+
+        // Contenido del modal dependiendo si es mensual o semestral
         if (tipo === 'mensual') {
             const nombresMeses = [
                 "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -219,34 +360,37 @@
             ];
 
             contenedor.innerHTML = `
-        <label>Año:
-            <input type="number" id="anio" value="${anio}" />
-        </label>
-        <label>Mes:
-            <select id="mes">
-                ${nombresMeses.map((nombre, index) => `<option value="${index + 1}">${nombre}</option>`).join('')}
-            </select>
-        </label>`;
+            <label>Año:
+                <select id="anio">${opcionesAnio}</select>
+            </label>
+            <label>Mes:
+                <select id="mes">
+                    ${nombresMeses.map((nombre, index) => `<option value="${index + 1}">${nombre}</option>`).join('')}
+                </select>
+            </label>`;
             contenedor.setAttribute("data-tipo", "mensual");
+
         } else if (tipo === 'semestral') {
             contenedor.innerHTML = `
-                <label>Año:
-                    <input type="number" id="anio" value="${anio}" />
-                </label>
-                <label>Semestre:
-                    <select id="semestre">
-                        <option value="1">Enero - Junio</option>
-                        <option value="2">Julio - Diciembre</option>
-                    </select>
-                </label>`;
+            <label>Año:
+                <select id="anio">${opcionesAnio}</select>
+            </label>
+            <label>Semestre:
+                <select id="semestre">
+                    <option value="1">Enero - Junio</option>
+                    <option value="2">Julio - Diciembre</option>
+                </select>
+            </label>`;
             contenedor.setAttribute("data-tipo", "semestral");
         }
     }
 
+    // Función para cerrar el modal
     function cerrarModal() {
         document.getElementById("modalSeleccion").style.display = "none";
     }
 
+    // Función para generar el Excel según selección
     function generarExcel() {
         const contenedor = document.getElementById("contenedorInputs");
         const tipo = contenedor.getAttribute("data-tipo");
@@ -265,14 +409,12 @@
         cerrarModal();
     }
 
+    // Cerrar modal si clic fuera del contenido
     window.onclick = function (event) {
         const modal = document.getElementById("modalSeleccion");
         if (event.target === modal) cerrarModal();
     };
 </script>
 
-<footer>
-    &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
-</footer>
 </body>
 </html>
