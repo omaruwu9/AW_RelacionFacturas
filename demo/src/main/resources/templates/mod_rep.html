@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Principal - Promex</title>
-
     <style>
         html, body {
             background-color: #0f0f0f;
@@ -114,7 +113,7 @@
 
         .botones-derecha {
             display: flex;
-            flex-direction: column;
+            /*flex-direction: column;*/
             gap: 15px;
             align-items: center;
         }
@@ -237,6 +236,7 @@
             <div class="botones-derecha">
                 <button onclick="abrirModal('mensual')">Reporte mensual</button>
                 <button onclick="abrirModal('semestral')">Reporte semestral</button>
+                <button onclick="abrirModal('anual')">Reporte anual</button>
             </div>
         </div>
 
@@ -257,7 +257,6 @@
     &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
 </footer>
 
-<!-- Librerías -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Script de la gráfica -->
@@ -267,6 +266,7 @@
             const response = await fetch('/api/grafica/polar-area');
             const data = await response.json();
 
+            data.sort((a, b) => a.familia.localeCompare(b.familia, 'es', { numeric: true }));
             const labels = data.map(item => item.familia);
             const values = data.map(item => item.total);
 
@@ -382,7 +382,14 @@
                 </select>
             </label>`;
             contenedor.setAttribute("data-tipo", "semestral");
-        }
+        }else if (tipo === 'anual') {
+        contenedor.innerHTML = `
+        <label>Año:
+            <select id="anio">${opcionesAnio}</select>
+        </label>`;
+        contenedor.setAttribute("data-tipo", "anual");
+    }
+
     }
 
     // Función para cerrar el modal
@@ -396,6 +403,28 @@
         const tipo = contenedor.getAttribute("data-tipo");
         const anio = document.getElementById("anio").value;
         let mesInicio = 1, mesFin = 12;
+
+        if (tipo === "anual") {
+            fetch(`/api/reporteAnual/anual?anio=${anio}`)
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `Reporte_Anual_${anio}.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(err => {
+                    console.error("Error al generar el reporte anual:", err);
+                    alert("No se pudo generar el reporte anual.");
+                });
+
+            cerrarModal();
+            return; // detener ejecución para evitar redirección
+        }
 
         if (tipo === "mensual") {
             mesInicio = mesFin = document.getElementById("mes").value;
