@@ -57,7 +57,7 @@ public class OrdenCompraController {
             respuesta.put("nombreProveedor", orden.get().getNombreProveedor());
             respuesta.put("estado", orden.get().getEstado());
 
-            // Solo agregas datos de llenado si los encuentra
+            // Solo agregar datos de llenado si los encuentra
             if (llenado.isPresent()) {
                 respuesta.put("factura", llenado.get().getFactura());
                 respuesta.put("fechaFactura", llenado.get().getFecha());
@@ -81,8 +81,6 @@ public class OrdenCompraController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron detalles para la orden.");
         }
     }
-
-
 
 }
 
