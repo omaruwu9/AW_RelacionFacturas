@@ -24,7 +24,8 @@ public class SincronizacionService {
     public void sincronizarOrdenesDeAyer() {
         String consultaSqlServer = """
             SELECT
-                LEFT(LTRIM(REPLACE(REPLACE(CAST(oc.OBSERVACIONES AS VARCHAR), CHAR(13), ''), CHAR(10), '')), 6) AS SOLICITUD_EXTRAIDA,
+                LEFT(LTRIM(REPLACE(REPLACE(CAST(oc.OBSERVACpromex12
+            IONES AS VARCHAR), CHAR(13), ''), CHAR(10), '')), 6) AS SOLICITUD_EXTRAIDA,
                 soce.SOLICITUD_OC,
                 CAST(soce.FECHA_REQUERIDA AS DATE) AS FECHA_REQUERIDA,
                 oce.ORDEN_COMPRA,
