@@ -23,6 +23,7 @@ public class UsuarioController {
         System.out.println("password: " + usuario.getPassword());
 
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        usuario.setId_rol(2);
         usuarioRepository.save(usuario);
 
         redirectAttributes.addFlashAttribute("success", "Usuario registrado correctamente");
