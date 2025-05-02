@@ -20,6 +20,9 @@ public class SecurityConfig {
 
     private final CustomAuthenticationProvider customAuthenticationProvider;
 
+    private final CustomLoginSuccessHandler loginSuccessHandler;
+
+
     //filtro de seguridad para las olicitudes HTTP de la aplicació web
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -29,6 +32,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         //rutas publicas qu no requieren autorización
                         .requestMatchers(
+                                "/api/login",
                                 "/login",
                                 "/registro",
                                 "/favicon.ico",
@@ -42,7 +46,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/dashboard", true)
+                        .successHandler(loginSuccessHandler) // Redirige según el rol
                         .permitAll()
                 )
                 .logout(logout -> logout.permitAll());

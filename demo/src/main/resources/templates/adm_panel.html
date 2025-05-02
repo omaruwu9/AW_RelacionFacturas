@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Principal - Promex</title>
+    <style>
+        html, body {margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f0f0f; color: #f4f4f4; height: 100%;}
+        body {display: flex; flex-direction: column;}
+        header {background-color: #161616; padding: 20px 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e60012; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);}
+        header img {max-height: 60px;}
+        #logout-form button {background-color: #e60012; color: white; border: none; padding: 10px 30px; border-radius: 5px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;}
+        #logout-form button:hover {background-color: #b3000e;}
+        main {flex: 1; padding: 50px 60px; max-width: 1280px; margin: 30px auto; background-color: #1b1b1b; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center;}
+        h1 {font-size: 36px; margin-bottom: 40px; color: #e60012; border-left: 6px solid #e60012; padding-left: 20px; text-align: left;}
+        .modules {display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;}
+        .module-card {background-color: #1f1f1f; padding: 30px; border-radius: 10px; width: 300px; text-align: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6); transition: transform 0.2s ease, box-shadow 0.2s ease;}
+        .module-card:hover {transform: translateY(-5px); box-shadow: 0 6px 16px rgba(0,0,0,0.8);}
+        .module-card img {width: 75px; height: 75px; margin-bottom: 15px;}
+        .module-card h3 {font-size: 20px; margin-bottom: 10px; color: #e60012;}
+        .module-card p {font-size: 14px; color: #ccc; margin-bottom: 20px;}
+        .module-card a {text-decoration: none; background-color: #e60012; color: white; padding: 12px 25px; border-radius: 5px; font-weight: bold;transition: background-color 0.3s ease;}
+        .module-card a:hover {background-color: #b3000e;}
+        footer {background-color: #161616; padding: 15px 0; text-align: center; font-size: 14px; color: #aaa; border-top: 1px solid #2a2a2a;}
+    </style>
+</head>
+<body>
+<header>
+    <img src="/images/promex-logo.png" alt="Logo Promex">
+    <form id="logout-form" th:action="@{/logout}" method="post">
+        <button type="submit">Cerrar Sesión</button>
+    </form>
+</header>
+
+<main>
+    <h1>Bienvenido a Administrador</h1>
+    <div class="modules">
+        <div class="module-card">
+            <img src="/images/Icon-module-users.png" alt="Módulo Reportes">
+            <h3>Gestión de usuarios</h3>
+            <p>Visualiza los usuarios que estan dados de alta dentro de la aplicación.</p>
+            <a href="/usuarios">Visualizar</a>
+        </div>
+
+        <div class="module-card">
+            <img src="/images/view_user/Icon-module-register.png" alt="Módulo Llenado">
+            <h3>Llenado de Órdenes de Compra</h3>
+            <p>Sube información masiva a traves de un documento excel de tus Órdenes de Compra.</p>
+            <a href="">Ir al Módulo</a>
+        </div>
+
+        <div class="module-card">
+            <img src="/images/Icon-module-actualizar.png" alt="Módulo Reportes">
+            <h3>Actualizar Órdenes de Compra</h3>
+            <p>Al dar clic se ejecuta al momento el servicio de Sincronización de las Órdenes de Compra.</p>
+            <form id="sincronizarForm" action="/sincronizar" method="post" style="margin: 0;">
+                <a href="#" class="btn-enlace" onclick="document.getElementById('sincronizarForm').submit(); return false;">
+                    Ejecutar Sincronización
+                </a>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer>
+    &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
+</footer>
+</body>
+</html>

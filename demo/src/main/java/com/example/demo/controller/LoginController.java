@@ -23,4 +23,9 @@ public class LoginController {
     public String dashboard() {
         return "dashboard";
     }
+
+    @GetMapping("/adm_panel")
+    public String adm_panel() {
+        return "adm_panel";
+    }
 }

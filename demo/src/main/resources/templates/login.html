@@ -178,6 +178,45 @@
     </div>
 </div>
 
+<script>
+    document.getElementById("loginForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const nomina = document.querySelector('input[name="username"]').value.trim();
+        const password = document.querySelector('input[name="password"]').value.trim();
+
+        console.log("Intentando login con:", nomina);
+
+        if (!nomina || !password) {
+            document.getElementById("errorMensaje").textContent = "Por favor ingrese sus credenciales.";
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ nomina: nomina, password: password })
+            });
+
+            const data = await response.json();
+            console.log("Respuesta del backend:", data);
+
+            if (response.ok && data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                document.getElementById("errorMensaje").textContent = data.error || "Credenciales incorrectas.";
+            }
+        } catch (error) {
+            console.error("Error al iniciar sesión:", error);
+            document.getElementById("errorMensaje").textContent = "Error de conexión con el servidor.";
+        }
+    });
+</script>
+
+
 <footer>
     &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
 </footer>

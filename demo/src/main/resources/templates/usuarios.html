@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Módulo de Usuarios - Promex</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #0f0f0f;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #161616;
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e60012;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        header img { height: 60px; }
+        #botones button {
+            background-color: #e60012;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 12px;
+            transition: all 0.3s ease;
+        }
+        #botones button:hover { background-color: #b3000e; }
+        .main-content {
+            flex: 1;
+            padding: 50px 60px;
+            max-width: 1300px;
+            margin: 30px auto;
+            background-color: #000000;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        h2 {
+            font-size: 34px;
+            margin-bottom: 35px;
+            color: #e60012;
+            border-left: 6px solid #e60012;
+            padding-left: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #121212;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #2a2a2a;
+            text-align: left;
+            font-size: 14px;
+        }
+        th {
+            background-color: #1f1f1f;
+            color: #ff4c4c;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+        tr:hover { background-color: #262626; cursor: pointer; }
+        footer {
+            background-color: #161616;
+            color: #aaa;
+            text-align: center;
+            padding: 18px 0;
+            font-size: 14px;
+            border-top: 1px solid #2a2a2a;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+        }
+        .modal-content {
+            background: linear-gradient(to bottom right, #1c1c1c, #2a2a2a);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 85%;
+            max-width: 600px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+        }
+        .modal-header, .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .modal-header h5 {
+            font-size: 20px;
+            color: #e60012;
+            margin: 0;
+        }
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #222;
+            border: 1px solid #444;
+            color: #fff;
+        }
+        .modal-content button {
+            padding: 10px 20px;
+            font-weight: bold;
+            background-color: #e60012;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .modal-content button:hover { background-color: #b3000e; }
+        .close {
+            color: #ccc;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover { color: #e60012; }
+    </style>
+</head>
+<body>
+<header>
+    <img src="/images/promex-logo.png" alt="Logo Promex">
+    <div id="botones">
+        <button onclick="location.href='/adm_panel'">Inicio</button>
+        <button onclick="location.href='/logout'">Cerrar Sesión</button>
+    </div>
+</header>
+
+<div class="main-content">
+    <h2>Gestión de Usuarios</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Nómina</th>
+            <th>Correo</th>
+            <th>Rol</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${usuarios}" th:onclick="|abrirModalPorId(${u.id})|">
+            <td th:text="${u.nomina}">Nómina</td>
+            <td th:text="${u.email}">Correo</td>
+            <td th:text="${u.id_rol == 1 ? 'Administrador' : 'Usuario'}">Rol</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div id="modalEditar" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5>Editar Usuario</h5>
+            <span class="close" onclick="cerrarModal()">&times;</span>
+        </div>
+        <form id="formEditar" th:action="@{/usuarios/guardar}" method="post">
+            <input type="hidden" name="id" id="idInput">
+            <label>Nómina:</label>
+            <input type="text" name="nomina" id="nominaInput" required>
+            <label>Correo:</label>
+            <input type="email" name="email" id="emailInput" required>
+            <label>Rol:</label>
+            <select name="id_rol" id="rolInput" required>
+                <option value="1">Administrador</option>
+                <option value="2">Usuario</option>
+            </select>
+            <label>Contraseña:</label>
+            <input type="text" name="password" id="passwordInput" required>
+            <div class="modal-footer">
+                <button type="submit">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer>
+    &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
+</footer>
+
+<script>
+    function abrirModalPorId(id) {
+        fetch(`/api/usuarios/${id}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('idInput').value = data.id;
+                document.getElementById('nominaInput').value = data.nomina;
+                document.getElementById('emailInput').value = data.email;
+                document.getElementById('rolInput').value = data.id_rol;
+                document.getElementById('passwordInput').value = data.password;
+                document.getElementById('modalEditar').style.display = 'block';
+            })
+            .catch(err => console.error("Error al obtener usuario:", err));
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalEditar').style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+        if (event.target === document.getElementById('modalEditar')) {
+            cerrarModal();
+        }
+    };
+</script>
+</body>
+</html>

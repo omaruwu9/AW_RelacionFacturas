@@ -24,4 +24,7 @@ public class Usuario {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private Integer id_rol;
 }

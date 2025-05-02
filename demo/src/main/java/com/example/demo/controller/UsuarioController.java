@@ -28,5 +28,4 @@ public class UsuarioController {
         redirectAttributes.addFlashAttribute("success", "Usuario registrado correctamente");
         return "redirect:/login";
     }
-
 }
