@@ -64,7 +64,7 @@
         </tr>
         <tr>
             <td><strong>Estado:</strong></td>
-            <td><span th:text="${orden.estado}">-</span></td>
+            <td><span id="estadoTexto" th:text="${orden.estado}">-</span></td>
             <td><strong></strong></td>
             <td><span></span></td>
         </tr>
@@ -149,12 +149,29 @@
     document.addEventListener("DOMContentLoaded", async function () {
         const conceptosMap = {};
 
+        const estadosMap = {
+            "O": "Cancelado",
+            "I": "Backorder",
+            "R": "Recibida",
+            "E": "Tránsito",
+            "P": "Por aprobar",
+            "A": "Planeada",
+            "U": "Cerrada"
+        };
+
+
         // 🔹 Recuperar ID desde la URL
         const id = window.location.pathname.split("/").pop();
         document.getElementById("id").value = id;
 
         const ordenCompraValor = document.getElementById("ordenCompraTexto")?.textContent?.trim();
         document.getElementById("orden_compra").value = ordenCompraValor || "";
+
+        const estadoSpan = document.getElementById("estadoTexto");
+        if (estadoSpan) {
+            const estadoOriginal = estadoSpan.textContent.trim();
+            estadoSpan.textContent = estadosMap[estadoOriginal] || estadoOriginal;
+        }
 
 
         // Función para calcular pesos totales
