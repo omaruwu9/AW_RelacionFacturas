@@ -29,9 +29,9 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
                 .orElseThrow();
 
         if (usuario.getId_rol() == 1) {
-            response.sendRedirect("/adm_panel");
+            response.sendRedirect("/adm_panel"); //si el rol de usuario es 1 (Administrador) se redirige al panel de administrador
         } else {
-            response.sendRedirect("/dashboard");
+            response.sendRedirect("/dashboard"); //si el rol es otro, por el momento se estará redirigiendo al panel de usuarios
         }
     }
 }

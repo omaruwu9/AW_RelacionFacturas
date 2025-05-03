@@ -13,6 +13,7 @@ public class FamiliasCostController {
     @Autowired
     private LlenadoRepository llenadoRepository;
 
+    //es con lo que se alimentan los totales de el modulo de reportes (la parte de la grafica y la tabla de Familias)
     @GetMapping("/api/llenado/totales-por-familia")
     public List<FamiliaGrafica> obtenerTotales() {
         return llenadoRepository.obtenerTotalesPorFamilia();

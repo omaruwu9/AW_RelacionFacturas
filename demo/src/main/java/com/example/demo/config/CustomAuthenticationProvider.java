@@ -17,6 +17,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private final UsuarioRepository usuarioRepository;
 
+    //el siguiente metodo es pra validar con respecto a si el uusario existe, si detecta que dicho usuario no existe lo que realiza es
+    //ignorar el inicio de sesión
     @Override
     public Authentication authenticate(Authentication authentication) {
         String nomina = authentication.getName();

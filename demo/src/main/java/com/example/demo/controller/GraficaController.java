@@ -14,6 +14,7 @@ public class GraficaController {
     @Autowired
     private LlenadoRepository llenadoRepository;
 
+    //es la gráfica
     @GetMapping("/polar-area")
     public List<FamiliaGrafica> obtenerDatosGrafica() {
         return llenadoRepository.obtenerTotalesPorFamilia();

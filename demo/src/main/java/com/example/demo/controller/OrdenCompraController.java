@@ -33,6 +33,8 @@ public class OrdenCompraController {
         return ordenCompraRepository.findAll();
     }
 
+    //recupera los detalles de la orden de compra, es decir, la información que se encuentra disponible (orden de compra y lo llenado de la
+    //factura)
     @GetMapping("/detalle-orden/{id}")
     public ResponseEntity<?> obtenerDetallesOrden(@PathVariable Integer id) {
         Optional<OrdenCompra> orden = ordenCompraRepository.findById(id);

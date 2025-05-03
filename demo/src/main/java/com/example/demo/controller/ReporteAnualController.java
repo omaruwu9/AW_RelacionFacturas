@@ -26,6 +26,7 @@ public class ReporteAnualController {
     @Autowired
     private ReporteAnualService reporteAnualService;
 
+    //maneja los totales de las familias para realizar la insersión en el reporte anual que se encuentra cargado en resources
     @GetMapping("/anual")
     public ResponseEntity<byte[]> generarReporteAnual(@RequestParam int anio) {
         try {

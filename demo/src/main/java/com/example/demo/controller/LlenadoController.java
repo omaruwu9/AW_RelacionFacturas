@@ -24,6 +24,7 @@ public class LlenadoController {
 
     private final LlenadoService llenadoService;
 
+    //se obtiene las ordenes de compra por medio de su llave primaria (id)
     @GetMapping("/api/ordenes-compra/{id}")
     public ResponseEntity<OrdenCompra> obtenerOrdenPorId(@PathVariable Integer id) {
         return ordenCompraRepository.findById(id)
@@ -31,7 +32,7 @@ public class LlenadoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-
+    //se despliega el ofrmulario para el llenado de información de la orden de comrpa que el usuario seleccione en la aplicación
     @GetMapping("/llenado/{id}")
     public String mostrarFormulario(@PathVariable("id") Integer id, Model model) {
         Optional<OrdenCompra> ordenOpt = ordenCompraRepository.findById(id);
@@ -52,6 +53,7 @@ public class LlenadoController {
         this.llenadoService = llenadoService;
     }
 
+    //guarda los datos que se ingresaron en el formulario del llenado
     @PostMapping("/llenadoG")
     public ResponseEntity<?> guardarLlenado(@RequestBody Llenado llenado) {
         try {

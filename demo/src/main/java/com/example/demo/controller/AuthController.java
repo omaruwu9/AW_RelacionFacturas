@@ -27,7 +27,7 @@ public class AuthController {
         if (user == null) {
             return ResponseEntity.status(401).body(Map.of("error", "Nómina no registrada"));
         }
-
+        //redirige según el rol
         String redireccion = (user.getId_rol() == 1) ? "/adm_panel" : "/dashboard";
 
         return ResponseEntity.ok(Map.of(

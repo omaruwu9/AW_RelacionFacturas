@@ -12,7 +12,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
 public class DataSourceConfig{
-
+    //configuración de las base de datos (PostgreSQL - Principal, y SQL Server - Secundaria)
+    //PostgreSQL es donde esta almacenadas las ordenes de comrpa y la información que se rellena de estas
+    //Además de los usuarios, junto con sus datos como la nomina, y el password que son utilizados para ingresar al sistema
+    //La segunda base de datos sirve para extraer las ordenes de compra y poder insertarlas en la base de datos principal (PostgreSQL)
     @Primary
     @Bean("postgresqlProperties")
     @ConfigurationProperties(prefix = "psql.datasource")

@@ -20,36 +20,35 @@ public class SincronizacionService {
     @Qualifier("postgresJdbcTemplate")
     private JdbcTemplate postgresJdbc;
 
-    @Scheduled(cron = "0 35 10 * * *") // Todos los días a las 10:00 AM
+    @Scheduled(cron = "0 08 11 * * *") // Todos los días a las 10:00 AM
     public void sincronizarOrdenesDeAyer() {
         String consultaSqlServer = """
             SELECT
-                LEFT(LTRIM(REPLACE(REPLACE(CAST(oc.OBSERVACpromex12
-            IONES AS VARCHAR), CHAR(13), ''), CHAR(10), '')), 6) AS SOLICITUD_EXTRAIDA,
-                soce.SOLICITUD_OC,
-                CAST(soce.FECHA_REQUERIDA AS DATE) AS FECHA_REQUERIDA,
-                oce.ORDEN_COMPRA,
-                CAST(oce.DESCRIPCION AS VARCHAR(MAX)) AS DESCRIPCION,
-                CAST(oc.FECHA AS DATE) AS FECHA_OC,
-                CAST(oc.FECHA_EMISION AS DATE) AS FECHA_EMISION,
-                oce.CENTRO_COSTO,
-                oce.CUENTA_CONTABLE,
-                cc.DESCRIPCION AS DESC_CUENTA_CONTABLE,
-                p.NOMBRE AS NOMBRE_PROVEEDOR,
-                oc.ESTADO
-            FROM PROMEX.ORDEN_COMPRA_LINEA oce
-            OUTER APPLY (
-                SELECT TOP 1 SOLICITUD_OC, FECHA_REQUERIDA
-                FROM PROMEX.SOLICITUD_OC_LINEA
-                WHERE CENTRO_COSTO = oce.CENTRO_COSTO
-                    AND YEAR(FECHA_REQUERIDA) = 2025
-                ORDER BY ABS(DATEDIFF(DAY, oce.FECHA, FECHA_REQUERIDA)) ASC
-            ) soce
-            JOIN PROMEX.ORDEN_COMPRA oc ON oce.ORDEN_COMPRA = oc.ORDEN_COMPRA
-            JOIN PROMEX.PROVEEDOR p ON oc.PROVEEDOR = p.PROVEEDOR
-            JOIN PROMEX.CUENTA_CONTABLE cc ON oce.CUENTA_CONTABLE = cc.CUENTA_CONTABLE
-            WHERE oce.CENTRO_COSTO IN ('05-050', '08-085')
-              AND CAST(oc.FECHA AS DATE) = CAST(DATEADD(DAY, -1, GETDATE()) AS DATE)
+                    LEFT(LTRIM(REPLACE(REPLACE(CAST(oc.OBSERVACIONES AS VARCHAR), CHAR(13), ''), CHAR(10), '')), 6) AS SOLICITUD_EXTRAIDA,
+                    soce.SOLICITUD_OC,
+                    CAST(soce.FECHA_REQUERIDA AS DATE) AS FECHA_REQUERIDA,
+                    oce.ORDEN_COMPRA,
+                    CAST(oce.DESCRIPCION AS VARCHAR(MAX)) AS DESCRIPCION,
+                    CAST(oc.FECHA AS DATE) AS FECHA_OC,
+                    CAST(oc.FECHA_EMISION AS DATE) AS FECHA_EMISION,
+                    oce.CENTRO_COSTO,
+                    oce.CUENTA_CONTABLE,
+                    cc.DESCRIPCION AS DESC_CUENTA_CONTABLE,
+                    p.NOMBRE AS NOMBRE_PROVEEDOR,
+                    oc.ESTADO
+                FROM PROMEX.ORDEN_COMPRA_LINEA oce
+                OUTER APPLY (
+                    SELECT TOP 1 SOLICITUD_OC, FECHA_REQUERIDA
+                    FROM PROMEX.SOLICITUD_OC_LINEA
+                    WHERE CENTRO_COSTO = oce.CENTRO_COSTO
+                        AND YEAR(FECHA_REQUERIDA) = 2025
+                    ORDER BY ABS(DATEDIFF(DAY, oce.FECHA, FECHA_REQUERIDA)) ASC
+                ) soce
+                JOIN PROMEX.ORDEN_COMPRA oc ON oce.ORDEN_COMPRA = oc.ORDEN_COMPRA
+                JOIN PROMEX.PROVEEDOR p ON oc.PROVEEDOR = p.PROVEEDOR
+                JOIN PROMEX.CUENTA_CONTABLE cc ON oce.CUENTA_CONTABLE = cc.CUENTA_CONTABLE
+                WHERE oce.CENTRO_COSTO IN ('05-050', '08-085')
+                  AND CAST(oc.FECHA AS DATE) = CAST(DATEADD(DAY, -1, GETDATE()) AS DATE)
         """;
 
         List<Map<String, Object>> resultados = sqlServerJdbc.queryForList(consultaSqlServer);
