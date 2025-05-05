@@ -13,6 +13,7 @@ import java.util.Map;
 
 @Repository
 public interface LlenadoRepository extends CrudRepository<Llenado, LlenadoId> {
+    //se obtiene los totales por familia (en general)
     @Query(value = "SELECT f.familia AS familia, " +
             "COALESCE(SUM(l.pesos_totales), 0) AS total " +
             "FROM familia f " +
@@ -21,6 +22,7 @@ public interface LlenadoRepository extends CrudRepository<Llenado, LlenadoId> {
     List<FamiliaGrafica> obtenerTotalesPorFamilia();
 
 
+    //se obtiene los totales por famiala pero por año
     @Query(value = "SELECT id_familia, COALESCE(SUM(pesos_totales), 0) " +
             "FROM llenado l " +
             "WHERE EXTRACT(YEAR FROM fecha) = :anio " +

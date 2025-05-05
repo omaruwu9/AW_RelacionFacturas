@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface ReporteRepository extends CrudRepository<Llenado, Integer> {
 
+    //consulta para realizar el reporte por el mes
     @Query(value = """
         SELECT 
             oc.solicitud_oc, oc.fecha_requerida, oc.descripcion, oc.orden_compra, oc.fecha_orden, oc.fecha_emision,

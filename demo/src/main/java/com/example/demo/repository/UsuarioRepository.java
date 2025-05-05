@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
     Optional<Usuario> findByNomina(String nomina);
+    //encontrar el usuario por su nomina
 }

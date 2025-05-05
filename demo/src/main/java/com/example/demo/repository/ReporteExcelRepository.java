@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface ReporteExcelRepository extends JpaRepository<Llenado, Integer> {
 
+
+    //consulta para realizar el reporte correspondiente
     @Query(value = "SELECT oc.solicitud_oc, oc.fecha_requerida, oc.descripcion, oc.orden_compra, " +
             "oc.fecha_orden, oc.fecha_emision, oc.centro_costo, oc.cuenta_contable, oc.desc_cuenta_contable, " +
             "oc.nombre_proveedor AS proveedor, l.fecha AS fecha_factura, l.factura, l.folio_fiscal, l.cantidad, " +

@@ -77,6 +77,7 @@ public class ReporteGeneralDTO {
         return obj != null ? Double.parseDouble(obj.toString()) : null;
     }
 
+    //es para la creación (como si fuera un mapeo) para el excel de los reportes
     public void llenarRow(Row row, CellStyle style) {
         int i = 0;
         row.createCell(i++).setCellValue(solicitudOc);

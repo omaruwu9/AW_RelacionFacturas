@@ -11,4 +11,6 @@ public interface OrdenCompraRepository extends CrudRepository<OrdenCompra, Strin
 
     Optional<OrdenCompra> findById(Integer id);
 
+    //lo anterior muestra la lista de OC además de poder encontrarlos por medio de sus id que se les asigno
+    //el id es un int que es autoincrementable a partir de los registros que se vayan realizando en la tabla
 }

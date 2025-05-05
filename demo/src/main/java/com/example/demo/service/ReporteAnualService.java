@@ -14,6 +14,8 @@ public class ReporteAnualService {
 
     private static final Map<String, String> CELDAS_REPORTE = crearMapaCeldas();
 
+
+    //se mapea las columnas en donde se hará la insersión de datos
     private static Map<String, String> crearMapaCeldas() {
         Map<String, String> mapa = new java.util.HashMap<>();
         mapa.put("2.1 Labor Cost Outside", "I71");
@@ -32,6 +34,8 @@ public class ReporteAnualService {
     }
 
 
+    //se genera el reporte anual, en classpathresourse debe estar el documento como corresponde o como sea que se llame
+    //en la parte de resources
     public byte[] generarReporteAnual(int anio, Map<String, Double> totalesAnioActual, Map<String, Double> totalesAnioAnterior) throws Exception {
         try (
                 InputStream input = new ClassPathResource("Reporte_japon_copia.xlsx").getInputStream();
