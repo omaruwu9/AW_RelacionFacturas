@@ -164,6 +164,25 @@
         const id = window.location.pathname.split("/").pop();
         document.getElementById("id").value = id;
 
+        // Obtener datos existentes del llenado si los hay
+        try {
+            const res = await fetch(`/api/llenado/${id}`);
+            if (res.ok) {
+                const datos = await res.json();
+                if (datos) {
+                    for (const [clave, valor] of Object.entries(datos)) {
+                        const input = document.querySelector(`[name="${clave}"]`);
+                        if (input) {
+                            input.value = valor;
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+            console.error("Error al cargar datos existentes:", err);
+        }
+
+
         const ordenCompraValor = document.getElementById("ordenCompraTexto")?.textContent?.trim();
         document.getElementById("orden_compra").value = ordenCompraValor || "";
 

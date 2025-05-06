@@ -30,6 +30,7 @@ public interface LlenadoRepository extends CrudRepository<Llenado, LlenadoId> {
     List<Object[]> obtenerTotalesPorFamiliaYAnio(@Param("anio") int anio);
 
 
+
 }
 
 

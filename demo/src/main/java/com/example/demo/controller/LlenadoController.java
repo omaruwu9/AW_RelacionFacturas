@@ -44,6 +44,14 @@ public class LlenadoController {
         }
     }
 
+    @GetMapping("/api/llenado/{id}")
+    @ResponseBody
+    public ResponseEntity<Llenado> obtenerLlenadoPorId(@PathVariable Integer id) {
+        Optional<Llenado> llenadoOpt = llenadoService.obtenerPorId(id);
+        return llenadoOpt.map(ResponseEntity::ok).orElse(ResponseEntity.noContent().build());
+    }
+
+
     @GetMapping("/volver")
     public String volverAOrdenes() {
         return "mod_llenado";
