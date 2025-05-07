@@ -29,6 +29,13 @@ public interface LlenadoRepository extends CrudRepository<Llenado, LlenadoId> {
             "GROUP BY id_familia", nativeQuery = true)
     List<Object[]> obtenerTotalesPorFamiliaYAnio(@Param("anio") int anio);
 
+    @Query(value = "SELECT f.familia AS familia, COALESCE(SUM(l.pesos_totales), 0) AS total " +
+            "FROM llenado l " +
+            "JOIN familia f ON l.id_familia = f.id_familia " +
+            "WHERE EXTRACT(YEAR FROM l.fecha) = :anio AND EXTRACT(MONTH FROM l.fecha) = :mes " +
+            "GROUP BY f.familia", nativeQuery = true)
+    List<FamiliaGrafica> obtenerTotalesPorFamiliaYMes(@Param("anio") int anio, @Param("mes") int mes);
+
 
 
 }

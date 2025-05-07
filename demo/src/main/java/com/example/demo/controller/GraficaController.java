@@ -15,9 +15,16 @@ public class GraficaController {
     private LlenadoRepository llenadoRepository;
 
     //es la gráfica
-    @GetMapping("/polar-area")
+    @GetMapping("/polar-area/anual")
     public List<FamiliaGrafica> obtenerDatosGrafica() {
         return llenadoRepository.obtenerTotalesPorFamilia();
+    }
+
+    @GetMapping("/polar-area")
+    public List<FamiliaGrafica> obtenerDatoGraficaPorMes(
+            @RequestParam int anio,
+            @RequestParam int mes) {
+        return llenadoRepository.obtenerTotalesPorFamiliaYMes(anio, mes);
     }
 }
 

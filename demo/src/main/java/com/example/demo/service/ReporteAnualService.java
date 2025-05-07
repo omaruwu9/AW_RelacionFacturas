@@ -24,6 +24,7 @@ public class ReporteAnualService {
         mapa.put("3.3 Servers", "I114");
         mapa.put("3.3 Laptops", "I118");
         mapa.put("3.3 Escaner", "I21");
+        mapa.put("3.3 Printers", "I24");
         mapa.put("3.3 Celulares y Other", "I127");
         mapa.put("3.4 Hardware Maintenance fee", "I137");
         mapa.put("4.1 Hosting", "I145");
