@@ -224,13 +224,31 @@
             const res = await fetch(`/api/${s.campo}`);
             const data = await res.json();
             const sel = document.getElementById(s.campo);
+
+            // Limpiar opciones existentes
+            sel.innerHTML = '<option value="">Seleccione una opción</option>';
+
+            // Añadir las opciones del backend
             data.forEach(opt => {
-                const o = document.createElement("option");
-                o.value = opt[s.idKey];
-                o.textContent = opt[s.textKey];
-                sel.appendChild(o);
+                const option = document.createElement("option");
+                option.value = String(opt[s.idKey]);
+                option.textContent = opt[s.textKey];
+                sel.appendChild(option);
             });
+
+            // Solo asignar valor si hay datos previamente recuperados
+            if (typeof datos !== "undefined" && datos[s.idKey] && datos[s.idKey][s.idKey]) {
+                const valorSeleccionado = String(datos[s.idKey][s.idKey]);
+                const optionExiste = [...sel.options].some(opt => opt.value === valorSeleccionado);
+
+                if (optionExiste) {
+                    sel.value = valorSeleccionado;
+                } else {
+                    console.warn(`⚠️ No se encontró la opción para ${s.campo} con valor:`, valorSeleccionado);
+                }
+            }
         }
+
 
         document.getElementById("archivo").addEventListener("change", function (e) {
             const archivo = e.target.files[0];

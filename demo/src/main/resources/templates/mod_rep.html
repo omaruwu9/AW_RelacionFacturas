@@ -325,10 +325,8 @@
 
 <!-- GRAFICA -->
 <script>
-    const nombresMeses = [
-        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-    ];
+    const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
     let chartInstance;
 
@@ -337,18 +335,19 @@
         const anio = document.getElementById("anioSelector").value;
 
         let url = `/api/grafica/polar-area/anual`;
-        let labelTexto = "Total ($MXN)";
+        let urlTabla = `/api/llenado/totales-por-familia?anio=${anio}`;
+        let labelTexto = `Total ($MXN)`;
 
-        if (mes !== "0") { // Si se elige un mes
+        if (mes !== "0") {
             url = `/api/grafica/polar-area?anio=${anio}&mes=${mes}`;
+            urlTabla = `/api/llenado/totales-por-familia?anio=${anio}&mes=${mes}`;
             labelTexto = `Total $MXN (${nombresMeses[mes - 1]} ${anio})`;
         }
 
         try {
+            // GRAFICA
             const response = await fetch(url);
             const data = await response.json();
-
-            // Ordenar por familia tipo 2.1, 2.2, 3.1... numéricamente
             data.sort((a, b) => {
                 const getKey = str => str.split(".").map(part => isNaN(part) ? part : parseFloat(part));
                 const [aKey, bKey] = [getKey(a.familia), getKey(b.familia)];
@@ -363,10 +362,7 @@
             const values = data.map(item => item.total);
 
             const ctx = document.getElementById('barChart').getContext('2d');
-
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
+            if (chartInstance) chartInstance.destroy();
 
             chartInstance = new Chart(ctx, {
                 type: 'bar',
@@ -399,8 +395,59 @@
                 }
             });
 
+            // TABLA
+            const tablaRes = await fetch(urlTabla);
+            const tablaData = await tablaRes.json();
+            tablaData.sort((a, b) => a.familia.localeCompare(b.familia, 'es', { numeric: true }));
+
+            const tbody = document.querySelector("#tablaFamilias tbody");
+            tbody.innerHTML = "";
+
+            const grupos = {
+                "2": "2. Labor Cost",
+                "3": "3. Equipment Cost (Include cost for total company)",
+                "4": "4. Overhead Cost (Enter total company cost)",
+                "MANTENIMIENTO": "Mantenimiento",
+                "CAPACITACION": "Capacitacion"
+            };
+
+            const clasesAgregadas = new Set();
+
+            tablaData.forEach(item => {
+                const clave = item.familia.startsWith("2.") ? "2" :
+                    item.familia.startsWith("3.") ? "3" :
+                        item.familia.startsWith("4.") ? "4" :
+                            item.familia.startsWith("MANTENIMIENTO") ? "MANTENIMIENTO" :
+                                item.familia.startsWith("CAPACITACION") ? "CAPACITACION" : null;
+
+                if (clave && !clasesAgregadas.has(clave)) {
+                    const trHeader = document.createElement("tr");
+                    trHeader.classList.add("grupo-toggle");
+                    trHeader.dataset.target = `grupo-${clave}`;
+                    trHeader.style.cursor = "pointer";
+                    trHeader.innerHTML = `<td colspan="2"><strong>${grupos[clave]}</strong></td>`;
+                    tbody.appendChild(trHeader);
+                    clasesAgregadas.add(clave);
+                }
+
+                const tr = document.createElement("tr");
+                if (clave) tr.classList.add(`grupo-${clave}`);
+                tr.style.display = "none";
+                tr.innerHTML = `<td>${item.familia}</td><td>$${parseFloat(item.total).toFixed(2)}</td>`;
+                tbody.appendChild(tr);
+            });
+
+            document.querySelectorAll(".grupo-toggle").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const targetClass = btn.dataset.target;
+                    document.querySelectorAll("." + targetClass).forEach(row => {
+                        row.style.display = (row.style.display === "none" || row.style.display === "") ? "table-row" : "none";
+                    });
+                });
+            });
+
         } catch (error) {
-            console.error("Error al cargar la gráfica:", error);
+            console.error("Error al actualizar gráfica y tabla:", error);
         }
     }
 
@@ -417,7 +464,7 @@
         const mesSelect = document.getElementById("mesSelector");
         const sinFiltro = document.createElement("option");
         sinFiltro.value = "0";
-        sinFiltro.textContent = "-- Todo el año --";
+        sinFiltro.textContent = "Historico";
         mesSelect.insertBefore(sinFiltro, mesSelect.firstChild);
 
         mesSelect.value = "0";
@@ -427,65 +474,9 @@
     });
 </script>
 
-
 <!-- Script para la tabla y generación de Excel -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Cargar la tabla de totales por familia
-        fetch("/api/llenado/totales-por-familia")
-            .then(res => res.json())
-            .then(data => {
-                data.sort((a, b) => a.familia.localeCompare(b.familia, 'es', { numeric: true }));
-                const tbody = document.querySelector("#tablaFamilias tbody");
 
-                // Limpiar tbody
-                tbody.innerHTML = "";
-
-                const grupos = {
-                    "2": "2. Labor Cost",
-                    "3": "3. Equipment Cost (Include cost for total company)",
-                    "4": "4. Overhead Cost (Enter total company cost)",
-                    "MANTENIMIENTO": "Mantenimiento"
-                };
-
-                const clasesAgregadas = new Set();
-
-                data.forEach(item => {
-                    const clave = item.familia.startsWith("2.") ? "2" :
-                        item.familia.startsWith("3.") ? "3" :
-                            item.familia.startsWith("4.") ? "4" :
-                            item.familia.startsWith("MANTENIMIENTO") ? "MANTENIMIENTO" : null;
-
-                    if (clave && !clasesAgregadas.has(clave)) {
-                        const trHeader = document.createElement("tr");
-                        trHeader.classList.add("grupo-toggle");
-                        trHeader.dataset.target = `grupo-${clave}`;
-                        trHeader.style.cursor = "pointer";
-                        trHeader.innerHTML = `<td colspan="2"><strong>${grupos[clave]}</strong></td>`;
-                        tbody.appendChild(trHeader);
-                        clasesAgregadas.add(clave);
-                    }
-
-                    const tr = document.createElement("tr");
-                    if (clave) tr.classList.add(`grupo-${clave}`);
-                    tr.style.display = "none"; // comienza colapsado
-                    tr.innerHTML = `<td>${item.familia}</td><td>$${parseFloat(item.total).toFixed(2)}</td>`;
-                    tbody.appendChild(tr);
-                });
-
-                // ✅ AÑADIR EVENTOS DESPUÉS DE AGREGAR FILAS
-                document.querySelectorAll(".grupo-toggle").forEach(btn => {
-                    btn.addEventListener("click", () => {
-                        const targetClass = btn.dataset.target;
-                        document.querySelectorAll("." + targetClass).forEach(row => {
-                            row.style.display = (row.style.display === "none" || row.style.display === "") ? "table-row" : "none";
-                        });
-                    });
-                });
-            })
-            .catch(err => console.error("Error al cargar datos:", err));
-
-    });
 
     // Función para abrir el modal y mostrar inputs/selects
     function abrirModal(tipo) {
