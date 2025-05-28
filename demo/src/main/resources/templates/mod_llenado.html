@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo de Llenado - Promex</title>
+    <link rel="icon" type="image/png" href="../static/images/favicon.png">
     <style>
         body {
             background-color: #0f0f0f;
@@ -195,6 +196,23 @@
             font-weight: bold;
             margin-bottom: 2px;
         }
+
+        input[type="month"] {
+            color-scheme: dark;
+            color: #fff;
+        }
+
+        .tabla-scroll {
+            max-height: 500px; /* Puedes ajustar la altura según tu diseño */
+            overflow-y: auto;
+        }
+
+        table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #1f1f1f;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
@@ -217,7 +235,7 @@
         <input type="text" id="filtroProveedor" placeholder="Buscar Proveedor">
     </div>
 
-    <table id="tabla">
+    <table id="tabla" class="tabla-scroll">
         <thead>
         <tr>
             <th onclick="ordenarTabla(0)">Orden Compra</th>
