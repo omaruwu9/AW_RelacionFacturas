@@ -161,7 +161,7 @@
         <tr>
             <th>Nómina</th>
             <th>Correo</th>
-            <th>Contraseña</th>
+            <th hidden="hidden">Contraseña</th>
             <th>Rol</th>
         </tr>
         </thead>
@@ -169,7 +169,7 @@
         <tr th:each="u : ${usuarios}" th:onclick="|abrirModalPorId(${u.id})|">
             <td th:text="${u.nomina}">Nómina</td>
             <td th:text="${u.email}">Correo</td>
-            <td th:text="${u.password}">Password</td>
+            <td th:text="${u.password}" hidden="hidden">Password</td>
             <td th:text="${u.id_rol == 1 ? 'Administrador' : 'Usuario'}">Rol</td>
         </tr>
         </tbody>

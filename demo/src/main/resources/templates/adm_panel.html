@@ -23,6 +23,12 @@
         .module-card a {text-decoration: none; background-color: #e60012; color: white; padding: 12px 25px; border-radius: 5px; font-weight: bold;transition: background-color 0.3s ease;}
         .module-card a:hover {background-color: #b3000e;}
         footer {background-color: #161616; padding: 15px 0; text-align: center; font-size: 14px; color: #aaa; border-top: 1px solid #2a2a2a;}
+
+        /* para la parte de pantalla de carga de datos */
+        #overlay-cargando {position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 9999;}
+        .loader-box {text-align: center; color: white; font-size: 20px; font-family: sans-serif;}
+        .spinner {border: 8px solid #f3f3f3; border-top: 8px solid white; border-radius: 50%; width: 60px; height: 60px; margin: 0 auto 20px; animation: spin 1s linear infinite;}
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -47,7 +53,7 @@
             <img src="/images/view_user/Icon-module-register.png" alt="Módulo Llenado">
             <h3>Órdenes de Compra</h3>
             <p>Sube información masiva a traves de un documento excel de tus Órdenes de Compra.</p>
-            <a href="">Ir al Módulo</a>
+            <a href="/mod_llenadoAdm">Ir al Módulo</a>
         </div>
 
         <div class="module-card">
@@ -55,13 +61,34 @@
             <h3>Actualizar Órdenes de Compra</h3>
             <p>Al dar clic se ejecuta al momento el servicio de Sincronización de las Órdenes de Compra.</p>
             <form id="sincronizarForm" action="/sincronizar" method="post" style="margin: 0;">
-                <a href="#" class="btn-enlace" onclick="document.getElementById('sincronizarForm').submit(); return false;">
+                <a href="#" class="btn-enlace" onclick="mostrarCargandoYEnviar(); return false;">
                     Ejecutar Sincronización
                 </a>
             </form>
         </div>
     </div>
 </main>
+
+
+<!--pantalla de cuando se actualizan los datos -->
+<div id="overlay-cargando" style="display: none;">
+    <div class="loader-box">
+        <div class="spinner"></div>
+        <p>Actualizando órdenes de compra...</p>
+    </div>
+</div>
+<script>
+    function mostrarCargandoYEnviar() {
+        document.getElementById('overlay-cargando').style.display = 'flex';
+
+        // Espera 1 segundo antes de enviar el formulario
+        setTimeout(function() {
+            document.getElementById('sincronizarForm').submit();
+        }, 1000); // 1000 milisegundos = 1 segundo, se agrego para que no se desaparezca enseguida
+    }
+</script>
+
+
 
 <footer>
     &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.

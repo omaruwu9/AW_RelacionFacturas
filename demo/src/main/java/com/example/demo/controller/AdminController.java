@@ -2,8 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Usuario;
 import com.example.demo.repository.UsuarioRepository;
+import com.example.demo.service.AdmDatosNullService;
+import com.example.demo.service.DatosNullService;
 import com.example.demo.service.AdmSincronizacionService;
-import com.example.demo.service.SincronizacionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +20,7 @@ public class AdminController {
 
     private final UsuarioRepository usuarioRepository;
     private final AdmSincronizacionService admsincronizacionService;
+    private final AdmDatosNullService admdatosNullService;
 
     // Módulo 1: Ver usuarios
     @GetMapping("/usuarios")
@@ -41,6 +43,7 @@ public class AdminController {
     @PostMapping("/sincronizar")
     public String ejecutarSincronizacion(RedirectAttributes redirectAttributes) {
         admsincronizacionService.sincronizarOrdenes();
+        admdatosNullService.actualizarOrdenesIncompletas();
         redirectAttributes.addFlashAttribute("mensaje", "✅ Sincronización ejecutada exitosamente.");
         return "redirect:/adm_panel";
     }
