@@ -42,7 +42,7 @@
         .main-content {
             flex: 1;
             padding: 50px 60px;
-            max-width: 1300px;
+            width: 90%;
             margin: 30px auto;
             background-color: #000000;
             border-radius: 12px;
@@ -273,14 +273,22 @@
     </div>
 </div>
 
-<!-- PARA EL ORDEN ASC, DEC DE LAS COLUMNAS -->
+<!-- PARA EL ORDEN DESC, DEC DE LAS COLUMNAS -->
 <script>
     let ordenAscendente = [];
 
     function ordenarTabla(columna) {
         const tabla = document.getElementById("tabla");
         const filas = Array.from(tabla.rows).slice(1); // quitar encabezado
-        const esAsc = ordenAscendente[columna] = !ordenAscendente[columna]; // alternar orden
+
+        // Si no hay estado previo, inicializa como false (es decir, primero en DESC)
+        if (ordenAscendente[columna] === undefined) {
+            ordenAscendente[columna] = false;
+        } else {
+            ordenAscendente[columna] = !ordenAscendente[columna]; // alternar orden
+        }
+
+        const esAsc = ordenAscendente[columna];
 
         filas.sort((a, b) => {
             let x = a.cells[columna].innerText;
@@ -355,7 +363,7 @@
 
 
             // Redirecciona al editar llenado al hacer click en la fila completa
-            tr.onclick = () => window.location.href = `/llenado/${item.id}`;
+            tr.onclick = () => window.open(`/llenado/${item.id}`, '_blank'); //a como esta se abre en una nueva ventana la OC, pero la siguiente linea es para que se abra en la misma ventana... window.location.href = `/llenado/${item.id}`;
             tr.innerHTML = `
                 <td>${item.ordenCompra}</td>
                 <td>${item.fecha_emision}</td>

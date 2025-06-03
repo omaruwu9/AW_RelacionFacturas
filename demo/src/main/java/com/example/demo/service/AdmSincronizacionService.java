@@ -66,7 +66,7 @@ public class AdmSincronizacionService {
                     nombre_proveedor, 
                     estado,
                     descripcion,
-                    fecha_oc
+                    fecha_orden
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
                     fila.get("SOLICITUD_EXTRAIDA"),
