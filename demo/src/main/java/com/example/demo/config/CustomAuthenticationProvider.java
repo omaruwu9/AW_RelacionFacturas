@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -16,28 +17,29 @@ import java.util.Collections;
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder; // ← necesario
 
-    //el siguiente metodo es pra validar con respecto a si el uusario existe, si detecta que dicho usuario no existe lo que realiza es
-    //ignorar el inicio de sesión
     @Override
     public Authentication authenticate(Authentication authentication) {
         String nomina = authentication.getName();
+        String rawPassword = authentication.getCredentials().toString();
 
         return usuarioRepository.findByNomina(nomina)
+                .filter(usuario -> passwordEncoder.matches(rawPassword, usuario.getPassword())) // ← validación aquí
                 .map(usuario -> {
                     UserDetails userDetails = User
                             .withUsername(usuario.getNomina())
-                            .password("[ignored]")
+                            .password(usuario.getPassword()) // puede usarse aquí
                             .authorities(Collections.emptyList())
                             .build();
 
                     return new UsernamePasswordAuthenticationToken(
                             userDetails,
-                            authentication.getCredentials(),
+                            rawPassword,
                             userDetails.getAuthorities()
                     );
                 })
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Nomina o contraseña incorrecta"));
     }
 
     @Override

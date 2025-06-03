@@ -54,12 +54,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    //codificación de contraseñas utilizando el BCrypt
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     //AuthenticationManager, necesario para autenticar
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
