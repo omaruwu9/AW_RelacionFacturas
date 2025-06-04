@@ -22,19 +22,21 @@ public class AuthController {
         String nomina = request.get("nomina");
         String password = request.get("password");
 
-        Usuario user = usuarioRepository.findByNomina(nomina)
-                .orElse(null);
+        Usuario user = usuarioRepository.findByNomina(nomina).orElse(null);
 
         if (user == null) {
-            return ResponseEntity.status(401).body(Map.of("error", "Nómina no registrada"));
+            return ResponseEntity
+                    .status(401)
+                    .body(Map.of("error", "Nómina no registrada"));
         }
 
-        // Verificar contraseña usando BCrypt
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            return ResponseEntity.status(401).body(Map.of("error", "Contraseña incorrecta"));
+            return ResponseEntity
+                    .status(401)
+                    .body(Map.of("error", "Contraseña incorrecta"));
         }
 
-        // Redirección según el rol
+        // Determinar redirección según el rol
         String redireccion = (user.getId_rol() == 1) ? "/adm_panel" : "/dashboard";
 
         return ResponseEntity.ok(Map.of(
@@ -42,7 +44,4 @@ public class AuthController {
                 "redirect", redireccion
         ));
     }
-
-
 }
-

@@ -136,6 +136,13 @@
                 <div class="text-center">
                     <img src="/images/PROGEN_SIN-FONDO.png" alt="Logo Promex">
                     <h4 class="mb-4" style="color: #e60012;">Iniciar Sesión</h4>
+
+                    <!-- Mensaje de error -->
+                    <div th:if="${errorMsg}" style="color: red;">
+                        <p th:text="${errorMsg}"></p>
+                    </div>
+
+
                     <form th:action="@{/login}" method="post">
                         <div class="form-group">
                             <i class="input-icon uil uil-at"></i>
@@ -145,7 +152,6 @@
                             <i class="input-icon uil uil-lock-alt"></i>
                             <input type="password" name="password" placeholder="Contraseña" class="form-style" required>
                         </div>
-                        <p id="errorMensaje" th:if="${param.error}" style="color: #ff4c4c;">Credenciales incorrectas</p>
                         <button type="submit">Iniciar Sesión</button>
                         <p class="link" onclick="document.getElementById('reg-log').checked = true">¿No tienes cuenta? Regístrate</p>
                     </form>
@@ -205,10 +211,12 @@
             const data = await response.json();
             console.log("Respuesta del backend:", data);
 
-            if (response.ok && data.redirect) {
-                window.location.href = data.redirect;
+            if (!res.ok) {
+                // Mostrar mensaje de error
+                document.getElementById('mensaje').textContent = data.error;
             } else {
-                document.getElementById("errorMensaje").textContent = data.error || "Credenciales incorrectas.";
+                // Login exitoso
+                document.getElementById('mensaje').textContent = data.message;
             }
         } catch (error) {
             console.error("Error al iniciar sesión:", error);

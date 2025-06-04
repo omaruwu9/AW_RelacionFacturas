@@ -17,6 +17,12 @@ public class UsuarioController {
 
     @PostMapping("/registro")
     public String registrarUsuario(Usuario usuario, RedirectAttributes redirectAttributes) {
+        // Validar si ya existe
+        if (usuarioRepository.findByNomina(usuario.getNomina()).isPresent()) {
+            redirectAttributes.addFlashAttribute("error", "El usuario ya está registrado.");
+            return "redirect:/login";
+        }
+
         System.out.println(">>> ENTRANDO A REGISTRO");
         System.out.println("nomina: " + usuario.getNomina());
         System.out.println("email: " + usuario.getEmail());
@@ -29,4 +35,6 @@ public class UsuarioController {
         redirectAttributes.addFlashAttribute("success", "Usuario registrado correctamente");
         return "redirect:/login";
     }
+
+
 }

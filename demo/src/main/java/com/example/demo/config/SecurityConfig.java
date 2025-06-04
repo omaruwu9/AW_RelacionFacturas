@@ -46,6 +46,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .failureUrl("/login?error=true")
                         .successHandler(loginSuccessHandler) // Redirige según el rol
                         .permitAll()
                 )
