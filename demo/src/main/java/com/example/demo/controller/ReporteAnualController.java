@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.FamiliaGrafica;
 import com.example.demo.repository.FamiliaRepository;
 import com.example.demo.repository.LlenadoRepository;
 import com.example.demo.service.ReporteAnualService;
@@ -48,23 +49,16 @@ public class ReporteAnualController {
 
 
     private Map<String, Double> traerTotalesPorFamilia(int anio) {
-        List<Object[]> resultados = llenadoRepository.obtenerTotalesPorFamiliaYAnio(anio);
-
-        // Mapea ID -> Nombre de familia
-        Map<Integer, String> idToNombre = familiaRepository.findAll().stream()
-                .collect(Collectors.toMap(f -> f.getId_familia(), f -> f.getFamilia()));
+        List<FamiliaGrafica> resultados = llenadoRepository.obtenerTotalesPorFamiliaYAnio(anio);
 
         Map<String, Double> resultado = new HashMap<>();
-        for (Object[] fila : resultados) {
-            Integer idFamilia = (Integer) fila[0];
-            Double total = ((Number) fila[1]).doubleValue();
-            String nombreFamilia = idToNombre.get(idFamilia);
-            if (nombreFamilia != null) {
-                resultado.put(nombreFamilia, total);
-            }
+        for (FamiliaGrafica fila : resultados) {
+            resultado.put(fila.getFamilia(), fila.getTotal().doubleValue()); // convierto BigDecimal a double
         }
         return resultado;
     }
+
+
 
 
 }

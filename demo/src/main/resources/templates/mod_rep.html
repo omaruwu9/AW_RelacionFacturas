@@ -103,7 +103,7 @@
 
                 <label for="mesSelector">Mes:</label>
                 <select id="mesSelector">
-                    <option value="0">Histórico</option>
+                    <option value="0">Anual</option>
                     <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
                     <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
                     <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
@@ -147,7 +147,7 @@
         const mes=document.getElementById("mesSelector").value;
         const anio=document.getElementById("anioSelector").value;
 
-        let url=`/api/grafica/polar-area/anual`;
+        let url = `/api/grafica/polar-area/anual?anio=${anio}`;
         let urlTabla=`/api/llenado/totales-por-familia?anio=${anio}`;
         let labelTexto=`Total ($MXN)`;
         if(mes!=="0"){

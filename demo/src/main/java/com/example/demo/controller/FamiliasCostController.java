@@ -23,7 +23,7 @@ public class FamiliasCostController {
         if (mes != null && mes >= 1 && mes <= 12) {
             return llenadoRepository.obtenerTotalesPorFamiliaYMes(anio, mes);
         } else {
-            return llenadoRepository.obtenerTotalesPorFamilia(); // O puedes hacer: llenadoRepository.obtenerTotalesPorFamiliaYAnio(anio)
+            return llenadoRepository.obtenerTotalesPorFamiliaYAnio(anio); // O puedes hacer: llenadoRepository.obtenerTotalesPorFamiliaYAnio(anio)
         }
     }
 }

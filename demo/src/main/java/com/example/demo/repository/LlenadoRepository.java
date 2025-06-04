@@ -23,11 +23,13 @@ public interface LlenadoRepository extends CrudRepository<Llenado, LlenadoId> {
 
 
     //se obtiene los totales por famiala pero por año
-    @Query(value = "SELECT id_familia, COALESCE(SUM(pesos_totales), 0) " +
-            "FROM llenado l " +
-            "WHERE EXTRACT(YEAR FROM fecha) = :anio " +
-            "GROUP BY id_familia", nativeQuery = true)
-    List<Object[]> obtenerTotalesPorFamiliaYAnio(@Param("anio") int anio);
+    @Query(value = "SELECT f.familia AS familia, " +
+            "COALESCE(SUM(l.pesos_totales), 0) AS total " +
+            "FROM familia f " +
+            "LEFT JOIN llenado l ON l.id_familia = f.id_familia " +
+            "WHERE EXTRACT(YEAR FROM l.fecha) = :anio " +
+            "GROUP BY f.familia", nativeQuery = true)
+    List<FamiliaGrafica> obtenerTotalesPorFamiliaYAnio(@Param("anio") int anio);
 
     @Query(value = "SELECT f.familia AS familia, COALESCE(SUM(l.pesos_totales), 0) AS total " +
             "FROM llenado l " +
