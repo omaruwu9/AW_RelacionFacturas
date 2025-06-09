@@ -182,7 +182,7 @@
             <h5>Editar Usuario</h5>
             <span class="close" onclick="cerrarModal()">&times;</span>
         </div>
-        <form id="formEditar" th:action="@{/usuarios/guardar}" method="post">
+        <form id="formEditar" th:action="@{/guardar}" method="post">
             <input type="hidden" name="id" id="idInput">
             <label>Nómina:</label>
             <input type="text" name="nomina" id="nominaInput" required>
