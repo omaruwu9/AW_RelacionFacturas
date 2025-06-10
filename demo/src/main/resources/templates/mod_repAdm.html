@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Panel Principal - Promex</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" type="image/png" href="../static/images/favicon.png">
+    <style>
+        html,body{background:#0f0f0f;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;color:#f4f4f4;margin:0;padding:0;display:flex;flex-direction:column;min-height:100vh}
+        header{background:#161616;padding:20px 60px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #e60012;box-shadow:0 4px 10px rgba(0,0,0,.5)}
+        header img{max-height:60px}
+        #botones button{background:#e60012;color:#fff;border:none;padding:10px 30px;border-radius:5px;font-size:15px;font-weight:600;cursor:pointer;margin-left:12px;transition:.3s}
+        #botones button:hover{background:#b3000e}
+
+        .main-content {
+            flex: 1;
+            padding: 50px 60px;
+            width: 90%;
+            margin: 30px auto;
+            background: #000000;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.5);
+        }
+        .contenido-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        .tabla-container {
+            flex: 0 0 20%; /* 20% ancho fijo */
+        }
+        .panel-derecho {
+            flex: 0 0 80%; /* 80% ancho fijo */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        table{width:100%;border-collapse:collapse;background:#121212;border-radius:8px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.4)}
+        th,td{padding:12px 15px;border-bottom:1px solid #2a2a2a;text-align:left;font-size:14px}
+        th{background:#1f1f1f;color:#ff4c4c;text-transform:uppercase;font-size:13px}
+        tr:hover{background:#262626;cursor:pointer}
+
+        .controles_grafica{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:#1f1f1f;padding:12px 20px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+        .controles_grafica label{font-weight:bold;color:#444}
+        .controles_grafica select,.controles_grafica button{padding:10px 16px;background:#444;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:bold;cursor:pointer}
+        .controles_grafica select{background:#2a2a2a;border:1px solid #444;font-weight:normal}
+        .controles_grafica button:hover,.controles_grafica select:hover{background:#444}
+
+        .botones-derecha{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+        .botones-derecha button{padding:12px 20px;background:#e60012;color:#fff;border:none;border-radius:6px;font-weight:bold;font-size:14px;cursor:pointer;transition:.3s}
+        .botones-derecha button:hover{background:#b3000e}
+
+        .grafica-container{width:100%;display:flex;justify-content:center;align-items:center}
+
+        footer{background:#161616;padding:15px 0;text-align:center;font-size:14px;color:#aaa;border-top:1px solid #2a2a2a}
+
+        .modal-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:999}
+        .modal-contenido{background:#1b1b1b;color:#f4f4f4;border-radius:12px;padding:30px 40px;max-width:500px;width:90%;position:relative;text-align:center;animation:fadeIn .3s ease-in-out}
+        .modal-cerrar{position:absolute;top:15px;right:20px;background:none;border:none;font-size:22px;color:#f4f4f4;cursor:pointer}
+        .modal-cerrar:hover{color:#e60012}
+        .modal-contenido button{margin-top:20px;padding:12px 25px;background:#e60012;color:#fff;border:none;border-radius:6px;font-weight:bold;font-size:15px;cursor:pointer}
+        .modal-contenido button:hover{background:#b3000e}
+        .modal-contenido input,.modal-contenido select{width:100%;padding:10px;margin-top:12px;margin-bottom:20px;background:#2a2a2a;border:1px solid #444;color:#fff;border-radius:6px;font-size:14px}
+        @keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+    </style>
+</head>
+<body>
+<header>
+    <img src="/images/promex-logo.png" alt="Promex Logo">
+    <div id="botones">
+        <button onclick="location.href='/adm_panel'">Inicio</button>
+        <button onclick="location.href='/logout'">Cerrar&nbsp;Sesión</button>
+    </div>
+</header>
+
+<div class="main-content">
+        <div class="contenido-flex">
+        <!-- TABLA -->
+        <div class="tabla-container">
+            <table id="tablaFamilias">
+                <thead><tr><th>Familia</th><th>Total&nbsp;(Pesos)</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- PANEL DERECHO -->
+        <div class="panel-derecho">
+
+            <!-- CONTROLES -->
+            <div class="controles_grafica">
+                <!-- BOTONES -->
+                <div class="botones-derecha">
+                    <button onclick="abrirModal('mensual')">Reporte&nbsp;mensual</button>
+                    <button onclick="abrirModal('semestral')">Reporte&nbsp;semestral</button>
+                    <button onclick="abrirModal('anual')">Reporte&nbsp;anual</button>
+                    <button onclick="abrirModal('japon')">Reporte&nbsp;Japón</button>
+                </div>
+                <br>
+
+
+                <label for="mesSelector">Mes:</label>
+                <select id="mesSelector">
+                    <option value="0">Anual</option>
+                    <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+                    <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+                    <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+                    <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+                </select>
+                <label for="anioSelector">Año:</label>
+                <select id="anioSelector"></select>
+                <button onclick="actualizarGrafica()">Actualizar</button>
+            </div>
+
+            <!-- GRÁFICA -->
+            <div class="grafica-container">
+                <canvas id="barChart" width="600" height="600"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalSeleccion">
+    <div class="modal-contenido">
+        <button class="modal-cerrar" onclick="cerrarModal()">×</button>
+        <h3 id="tituloModal">Selecciona el periodo</h3>
+        <div id="contenedorInputs"></div>
+        <button onclick="generarExcel()">Generar&nbsp;Excel</button>
+    </div>
+</div>
+
+<footer>
+    &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- ---------- SCRIPT GRÁFICA Y TABLA (sin cambios de lógica) ---------- -->
+<script>
+    const nombresMeses=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+    let chartInstance;
+
+    async function actualizarGrafica(){
+        const mes=document.getElementById("mesSelector").value;
+        const anio=document.getElementById("anioSelector").value;
+
+        let url = `/api/grafica/polar-area/anual?anio=${anio}`;
+        let urlTabla=`/api/llenado/totales-por-familia?anio=${anio}`;
+        let labelTexto=`Total ($MXN)`;
+        if(mes!=="0"){
+            url=`/api/grafica/polar-area?anio=${anio}&mes=${mes}`;
+            urlTabla=`/api/llenado/totales-por-familia?anio=${anio}&mes=${mes}`;
+            labelTexto=`Total $MXN (${nombresMeses[mes-1]} ${anio})`;
+        }
+        try{
+            /* ----------- GRAFICA ----------- */
+            const response=await fetch(url);
+            const data=await response.json();
+            data.sort((a,b)=>{
+                const getKey=str=>str.split(".").map(p=>isNaN(p)?p:parseFloat(p));
+                const [ak,bk]=[getKey(a.familia),getKey(b.familia)];
+                for(let i=0;i<Math.max(ak.length,bk.length);i++){
+                    if((ak[i]??0)<(bk[i]??0))return-1;
+                    if((ak[i]??0)>(bk[i]??0))return 1;
+                }
+                return 0;
+            });
+            const labels=data.map(i=>i.familia);
+            const values=data.map(i=>i.total);
+            if(chartInstance)chartInstance.destroy();
+            chartInstance=new Chart(document.getElementById("barChart"),{
+                type:"bar",
+                data:{labels:labels,datasets:[{label:labelTexto,data:values,backgroundColor:"rgba(230,0,18,0.7)",borderColor:"rgba(230,0,18,1)",borderWidth:1}]},
+                options:{
+                    responsive:true,
+                    plugins:{legend:{labels:{color:"white"}},tooltip:{backgroundColor:"#333",titleColor:"#fff",bodyColor:"#fff",borderColor:"#e60012",borderWidth:1}},
+                    scales:{x:{ticks:{color:"white"},grid:{color:"#444"}},y:{ticks:{color:"white"},grid:{color:"#444"}}}
+                }
+            });
+
+            /* ----------- TABLA ----------- */
+            const tablaRes=await fetch(urlTabla);
+            const tablaData=await tablaRes.json();
+            tablaData.sort((a,b)=>a.familia.localeCompare(b.familia,'es',{numeric:true}));
+            const tbody=document.querySelector("#tablaFamilias tbody");
+            tbody.innerHTML="";
+            const grupos={
+                "2":"2. Labor Cost",
+                "3":"3. Equipment Cost (Include cost for total company)",
+                "4":"4. Overhead Cost (Enter total company cost)",
+                "MANTENIMIENTO":"Mantenimiento",
+                "CAPACITACION":"Capacitacion"
+            };
+            const agregados=new Set();
+            tablaData.forEach(item=>{
+                const clave=item.familia.startsWith("2.")?"2":
+                    item.familia.startsWith("3.")?"3":
+                        item.familia.startsWith("4.")?"4":
+                            item.familia.startsWith("MANTENIMIENTO")?"MANTENIMIENTO":
+                                item.familia.startsWith("CAPACITACION")?"CAPACITACION":
+                                    null;
+                if(clave && !agregados.has(clave)){
+                    const th=document.createElement("tr");
+                    th.classList.add("grupo-toggle");
+                    th.dataset.target=`grupo-${clave}`;
+                    th.style.cursor="pointer";
+                    th.innerHTML=`<td colspan="2"><strong>${grupos[clave]}</strong></td>`;
+                    tbody.appendChild(th);
+                    agregados.add(clave);
+                }
+
+                const tr=document.createElement("tr");
+                if(clave) tr.classList.add(`grupo-${clave}`);
+                tr.style.display="none";
+
+                const totalFormateado = item.total.toLocaleString("es-MX", {
+                    style: "currency",
+                    currency: "MXN",
+                    minimumFractionDigits: 2
+                });
+
+                tr.innerHTML = `<td>${item.familia}</td><td>${totalFormateado}</td>`;
+                tbody.appendChild(tr);
+            });
+
+            document.querySelectorAll(".grupo-toggle").forEach(btn=>{
+                btn.onclick=()=>{
+                    document.querySelectorAll(`.${btn.dataset.target}`).forEach(r=>{
+                        r.style.display = r.style.display === "none" || !r.style.display ? "table-row" : "none";
+                    });
+                };
+            });
+
+        }catch(e){console.error("Error:",e);}
+    }
+
+    /* Selección inicial de año/mes */
+    document.addEventListener("DOMContentLoaded",()=>{
+        const anioActual=new Date().getFullYear();
+        for(let i=anioActual;i>=anioActual-10;i--){
+            const o=document.createElement("option");
+            o.value=i;
+            o.textContent=i;
+            document.getElementById("anioSelector").appendChild(o);
+        }
+        document.getElementById("mesSelector").value="0";
+        document.getElementById("anioSelector").value=anioActual;
+        actualizarGrafica();
+    });
+</script>
+
+<!-- ---------- SCRIPT MODALES Y EXCEL ---------- -->
+<script>
+    function abrirModal(tipo){
+        const modal=document.getElementById("modalSeleccion");
+        const contenedor=document.getElementById("contenedorInputs");
+        const titulo=document.getElementById("tituloModal");
+        modal.style.display="flex";
+
+        /* Opciones año dinámicas */
+        const anioActual=new Date().getFullYear();
+        let opcionesAnio="";
+        for(let i=anioActual;i>=anioActual-10;i--){opcionesAnio+=`<option value="${i}">${i}</option>`;}
+
+        // Resetea HTML y set tipo
+        contenedor.innerHTML="";
+        contenedor.setAttribute("data-tipo",tipo);
+
+        if(tipo==="mensual"){
+            titulo.textContent="Selecciona mes y año";
+            const meses=nombresMeses.map((n,i)=>`<option value="${i+1}">${n}</option>`).join("");
+            contenedor.innerHTML=`
+            <label>Año:<select id="anio">${opcionesAnio}</select></label>
+            <label>Mes:<select id="mes">${meses}</select></label>`;
+        }else if(tipo==="semestral"){
+            titulo.textContent="Selecciona semestre y año";
+            contenedor.innerHTML=`
+            <label>Año:<select id="anio">${opcionesAnio}</select></label>
+            <label>Semestre:<select id="semestre">
+                <option value="1">Enero-Junio</option>
+                <option value="2">Julio-Diciembre</option>
+            </select></label>`;
+        }else if(tipo==="anual"||tipo==="japon"){ /* Ambos solo requieren año */
+            titulo.textContent=tipo==="anual"?"Selecciona el año del reporte anual":"Selecciona el año del Reporte Japón";
+            contenedor.innerHTML=`<label>Año:<select id="anio">${opcionesAnio}</select></label>`;
+        }
+    }
+
+    function cerrarModal(){document.getElementById("modalSeleccion").style.display="none";}
+
+    function generarExcel(){
+        const contenedor=document.getElementById("contenedorInputs");
+        const tipo=contenedor.getAttribute("data-tipo");
+        const anio=document.getElementById("anio").value;
+
+        /* --- Reporte JAPÓN (funcionalidad original) --- */
+        if(tipo==="japon"){
+            fetch(`/api/reporteAnual/anual?anio=${anio}`)
+                .then(r=>r.blob())
+                .then(blob=>{
+                    const url=URL.createObjectURL(blob);
+                    const a=document.createElement("a");
+                    a.href=url;a.download=`Reporte_Japon_${anio}.xlsx`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+                })
+                .catch(()=>alert("Error al generar Reporte Japón"));
+            cerrarModal();return;
+        }
+
+        /* --- NUEVO Reporte ANUAL (misma lógica mensual/semestral pero todo el año) --- */
+        if(tipo==="anual"){
+            window.location.href=`/api/reporte/descargar?anio=${anio}&mesInicio=1&mesFin=12`;
+            cerrarModal();return;
+        }
+
+        /* --- Mensual y semestral (sin cambios) --- */
+        let mesInicio=1,mesFin=12;
+        if(tipo==="mensual"){mesInicio=mesFin=document.getElementById("mes").value;}
+        else if(tipo==="semestral"){
+            const s=document.getElementById("semestre").value;
+            mesInicio=s==="1"?1:7;mesFin=s==="1"?6:12;
+        }
+        window.location.href=`/api/reporte/descargar?anio=${anio}&mesInicio=${mesInicio}&mesFin=${mesFin}`;
+        cerrarModal();
+    }
+
+    /* Cerrar modal al hacer clic fuera */
+    window.onclick=e=>{if(e.target===document.getElementById("modalSeleccion"))cerrarModal();};
+</script>
+
+</body>
+</html>
