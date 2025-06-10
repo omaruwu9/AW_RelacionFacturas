@@ -14,7 +14,7 @@
         #logout-form button:hover {background-color: #b3000e;}
         main {flex: 1; padding: 50px 60px; max-width: 1280px; margin: 30px auto; background-color: #1b1b1b; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center;}
         h1 {font-size: 36px; margin-bottom: 40px; color: #e60012; border-left: 6px solid #e60012; padding-left: 20px; text-align: left;}
-        .modules {display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;}
+        .modules {display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px 60px; justify-items: center;}
         .module-card {background-color: #1f1f1f; padding: 30px; border-radius: 10px; width: 300px; text-align: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6); transition: transform 0.2s ease, box-shadow 0.2s ease;}
         .module-card:hover {transform: translateY(-5px); box-shadow: 0 6px 16px rgba(0,0,0,0.8);}
         .module-card img {width: 75px; height: 75px; margin-bottom: 15px;}
@@ -50,6 +50,17 @@
         </div>
 
         <div class="module-card">
+            <img src="/images/Icon-module-actualizar.png" alt="Módulo Reportes">
+            <h3>Actualizar Órdenes de Compra</h3>
+            <p>Al dar clic se ejecuta al momento el servicio de Sincronización de las Órdenes de Compra.</p>
+            <form id="sincronizarForm" action="/sincronizar" method="post" style="margin: 0;">
+                <a href="#" class="btn-enlace" onclick="mostrarCargandoYEnviar(); return false;">
+                    Ejecutar Sincronización
+                </a>
+            </form>
+        </div>
+
+        <div class="module-card">
             <img src="/images/view_user/Icon-module-register.png" alt="Módulo Llenado">
             <h3>Órdenes de Compra</h3>
             <p>Sube información masiva a traves de un documento excel de tus Órdenes de Compra.</p>
@@ -61,17 +72,6 @@
             <h3>Generación de Reportes</h3>
             <p>Visualiza reportes anuales o bimestrales con los datos recopilados por el sistema.</p>
             <a href="/mod_repAdm">Generar Reportes</a>
-        </div>
-
-        <div class="module-card">
-            <img src="/images/Icon-module-actualizar.png" alt="Módulo Reportes">
-            <h3>Actualizar Órdenes de Compra</h3>
-            <p>Al dar clic se ejecuta al momento el servicio de Sincronización de las Órdenes de Compra.</p>
-            <form id="sincronizarForm" action="/sincronizar" method="post" style="margin: 0;">
-                <a href="#" class="btn-enlace" onclick="mostrarCargandoYEnviar(); return false;">
-                    Ejecutar Sincronización
-                </a>
-            </form>
         </div>
     </div>
 </main>
