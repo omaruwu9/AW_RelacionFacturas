@@ -23,7 +23,7 @@ public class DatosNullService {
      * Actualiza en PostgreSQL las órdenes que tienen estado o fecha_emision en null,
      * obteniendo los datos faltantes desde SQL Server.
      */
-    @Scheduled(cron = "0 35 10 * * *") // Ejecución programada junto con la de inserciín de datos
+    //@Scheduled(cron = "0 35 10 * * *") // Ejecución programada junto con la de inserciín de datos
     public void actualizarOrdenesIncompletas() {
 
         // Paso 1: Obtener órdenes incompletas desde PostgreSQL

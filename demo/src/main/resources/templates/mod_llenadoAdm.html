@@ -363,7 +363,7 @@
 
 
             // Redirecciona al editar llenado al hacer click en la fila completa
-            tr.onclick = () => window.open(`/llenado/${item.id}`, '_blank'); //a como esta se abre en una nueva ventana la OC, pero la siguiente linea es para que se abra en la misma ventana... window.location.href = `/llenado/${item.id}`;
+            tr.onclick = () => window.open(`/llenadoAdm/${item.id}`, '_blank'); //a como esta se abre en una nueva ventana la OC, pero la siguiente linea es para que se abra en la misma ventana... window.location.href = `/llenado/${item.id}`;
             tr.innerHTML = `
                 <td>${item.ordenCompra}</td>
                 <td>${item.fecha_emision}</td>

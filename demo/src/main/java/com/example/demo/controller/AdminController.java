@@ -43,7 +43,7 @@ public class AdminController {
     @PostMapping("/sincronizar")
     public String ejecutarSincronizacion(RedirectAttributes redirectAttributes) {
         admsincronizacionService.sincronizarOrdenes();
-        admdatosNullService.actualizarOrdenesIncompletas();
+        //admdatosNullService.actualizarOrdenesIncompletas();
         redirectAttributes.addFlashAttribute("mensaje", "✅ Sincronización ejecutada exitosamente.");
         return "redirect:/adm_panel";
     }

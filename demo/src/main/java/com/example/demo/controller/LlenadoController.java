@@ -44,6 +44,17 @@ public class LlenadoController {
         }
     }
 
+    @GetMapping("/llenadoAdm/{id}")
+    public String mostrarFormularioAdm(@PathVariable("id") Integer id, Model model) {
+        Optional<OrdenCompra> ordenOpt = ordenCompraRepository.findById(id);
+        if (ordenOpt.isPresent()) {
+            model.addAttribute("orden", ordenOpt.get());
+            return "formulario_llenadoAdm"; // nombre del HTML (sin .html)
+        } else {
+            return "redirect:/error"; // o puedes mostrar una vista de error personalizada
+        }
+    }
+
     @GetMapping("/api/llenado/{id}")
     @ResponseBody
     public ResponseEntity<Llenado> obtenerLlenadoPorId(@PathVariable Integer id) {

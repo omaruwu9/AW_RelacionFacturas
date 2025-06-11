@@ -45,6 +45,9 @@ public class OrdenCompra {
     @Column(name = "estado")
     private String estado;
 
+    @Column(name = "rowpointer")
+    private String rowpointer;
+
     // getters y setters
     public Integer getId() {
         return id;
@@ -141,4 +144,8 @@ public class OrdenCompra {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
+    public String getRowpointer() {return rowpointer;}
+
+    public void setRowpointer(String rowpointer) {this.rowpointer = rowpointer;}
 }
