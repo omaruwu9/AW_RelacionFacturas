@@ -57,6 +57,11 @@ public class LlenadoController {
         return "mod_llenado";
     }
 
+    @GetMapping("/volverAdm")
+    public String volverAOrdenesAdm() {
+        return "mod_llenadoAdm";
+    }
+
     public LlenadoController(LlenadoService llenadoService) {
         this.llenadoService = llenadoService;
     }
