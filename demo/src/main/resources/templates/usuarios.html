@@ -170,7 +170,13 @@
             <td th:text="${u.nomina}">Nómina</td>
             <td th:text="${u.email}">Correo</td>
             <td th:text="${u.password}" hidden="hidden">Password</td>
-            <td th:text="${u.id_rol == 1 ? 'Administrador' : 'Usuario'}">Rol</td>
+            <td th:text="${u.id_rol == 1 ? 'Administrador' :
+              (u.id_rol == 2 ? 'Usuario IT' :
+              (u.id_rol == 3 ? 'Usuario RH' :
+              (u.id_rol == 4 ? 'Usuario OP' :
+              (u.id_rol == 5 ? 'Usuario PL' :
+              (u.id_rol == 6 ? 'Usuario EHS' : 'Usuario MTTO')))))}">Rol</td>
+
         </tr>
         </tbody>
     </table>
@@ -191,7 +197,12 @@
             <label>Rol:</label>
             <select name="id_rol" id="rolInput" required>
                 <option value="1">Administrador</option>
-                <option value="2">Usuario</option>
+                <option value="2">Usuario IT</option>
+                <option value="3">Usuario RH</option>
+                <option value="4">Usuario OP</option>
+                <option value="5">Usuario PL</option>
+                <option value="6">Usuario EHS</option>
+                <option value="7">Usuario MTTO</option>
             </select>
             <label>Contraseña:</label>
             <input type="text" name="password" id="passwordInput" required>
