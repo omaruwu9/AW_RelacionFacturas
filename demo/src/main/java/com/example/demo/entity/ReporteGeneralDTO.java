@@ -90,27 +90,28 @@ public class ReporteGeneralDTO {
         row.createCell(i++).setCellValue(cuentaContable);
         row.createCell(i++).setCellValue(descripcionCuentaContable);
         row.createCell(i++).setCellValue(proveedor);
-        row.createCell(i++).setCellValue(formatDate(fechaFactura));
-        row.createCell(i++).setCellValue(factura);
-        row.createCell(i++).setCellValue(folioFiscal);
-        row.createCell(i++).setCellValue(cantidad);
-        row.createCell(i++).setCellValue(polizaGarantia);
-        row.createCell(i++).setCellValue(familia);
-        row.createCell(i++).setCellValue(responsable);
-        row.createCell(i++).setCellValue(extPresupuesto);
-        row.createCell(i++).setCellValue(moneda);
-        row.createCell(i++).setCellValue(pu.doubleValue());
-        row.createCell(i++).setCellValue(subtotal.doubleValue());
-        row.createCell(i++).setCellValue(ivaPorc);
-        row.createCell(i++).setCellValue(total.doubleValue());
-        row.createCell(i++).setCellValue(tipoCambio.doubleValue());
-        row.createCell(i++).setCellValue(pesosTotales.doubleValue());
+        row.createCell(i++).setCellValue(formatDate(fechaFactura)); // puede ser null
+        row.createCell(i++).setCellValue(factura != null ? factura : "");
+        row.createCell(i++).setCellValue(folioFiscal != null ? folioFiscal : "");
+        row.createCell(i++).setCellValue(cantidad != null ? cantidad : 0);
+        row.createCell(i++).setCellValue(polizaGarantia != null ? polizaGarantia : "");
+        row.createCell(i++).setCellValue(familia != null ? familia : "");
+        row.createCell(i++).setCellValue(responsable != null ? responsable : "");
+        row.createCell(i++).setCellValue(extPresupuesto != null ? extPresupuesto : "");
+        row.createCell(i++).setCellValue(moneda != null ? moneda : "");
+        row.createCell(i++).setCellValue(pu != null ? pu : 0.0);
+        row.createCell(i++).setCellValue(subtotal != null ? subtotal : 0.0);
+        row.createCell(i++).setCellValue(ivaPorc != null ? ivaPorc : 0);
+        row.createCell(i++).setCellValue(total != null ? total : 0.0);
+        row.createCell(i++).setCellValue(tipoCambio != null ? tipoCambio : 0.0);
+        row.createCell(i++).setCellValue(pesosTotales != null ? pesosTotales : 0.0);
         row.createCell(i++).setCellValue(estatus);
 
         for (int j = 0; j < i; j++) {
             row.getCell(j).setCellStyle(style);
         }
     }
+
 
     private String formatDate(String dateStr) {
         if (dateStr == null || dateStr.isEmpty()) return "";
