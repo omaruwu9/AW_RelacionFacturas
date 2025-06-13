@@ -2,12 +2,14 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.ReporteGeneralDTO;
 import com.example.demo.service.ReporteExcelService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,10 +31,15 @@ public class ReportesExcelController {
     @GetMapping("/descargar")
     public ResponseEntity<InputStreamResource> descargarExcel(@RequestParam int anio,
                                                               @RequestParam int mesInicio,
-                                                              @RequestParam int mesFin) {
+                                                              @RequestParam int mesFin,
+                                                              Authentication authentication,
+                                                              HttpServletResponse response) {
+
+
+
         try {
-            List<ReporteGeneralDTO> datos = service.obtenerDatosPorPeriodo(anio, mesInicio, mesFin);
-            ByteArrayInputStream excel = service.exportarExcel(datos);
+            List<ReporteGeneralDTO> datos = service.generarReporteFiltrado(authentication, anio, mesInicio, mesFin);
+            ByteArrayInputStream excel = service.exportarExcel(datos, response);
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Disposition", "attachment; filename=Reporte.xls");

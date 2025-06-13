@@ -1,20 +1,22 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.ReporteGeneralDTO;
+import com.example.demo.entity.Usuario;
+import com.example.demo.repository.ReporteDinamicoRepository;
 import com.example.demo.repository.ReporteExcelRepository;
-import com.example.demo.repository.ReporteRepository;
+import com.example.demo.repository.UsuarioRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.time.Month;
 import java.util.List;
 
 @Service
@@ -28,7 +30,7 @@ public class ReporteExcelService {
         return resultados.stream().map(obj -> new ReporteGeneralDTO(obj)).toList();
     }
 
-    public ByteArrayInputStream exportarExcel(List<ReporteGeneralDTO> datos) throws IOException {
+    public ByteArrayInputStream exportarExcel(List<ReporteGeneralDTO> datos, HttpServletResponse response) throws IOException {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             HSSFSheet sheet = workbook.createSheet("Reporte");
 
@@ -88,5 +90,39 @@ public class ReporteExcelService {
             return new ByteArrayInputStream(out.toByteArray());
         }
     }
+
+    @Autowired
+    private ReporteDinamicoRepository reporteDinamicoRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    public List<ReporteGeneralDTO> generarReporteFiltrado(Authentication auth, int anio, int mesInicio, int mesFin) {
+        String nomina = auth.getName();
+        Usuario usuario = usuarioRepository.findByNomina(nomina).orElse(null);
+        if (usuario == null) return List.of();
+
+        int rol = usuario.getId_rol();
+        List<String> centros;
+
+        switch (rol) {
+            case 2: centros = List.of("05-050", "08-085"); break;
+            case 3: centros = List.of("02-020", "08-082"); break;
+            case 4: centros = List.of("04-040", "08-084"); break;
+            case 5: centros = List.of("03-030", "08-083"); break;
+            case 6: centros = List.of("06-060"); break;
+            case 7: centros = List.of("08-087"); break;
+            case 8: centros = List.of("07-070"); break;
+            case 1: // Admin
+                // Aquí puedes seguir usando el método existente que no filtra
+                return repository.obtenerReportePorPeriodo(anio, mesInicio, mesFin)
+                        .stream().map(ReporteGeneralDTO::new).toList();
+            default:
+                return List.of();
+        }
+
+        return reporteDinamicoRepository.obtenerReporteConCentros(anio, mesInicio, mesFin, centros);
+    }
+
 
 }

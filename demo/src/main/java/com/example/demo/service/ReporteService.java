@@ -1,6 +1,10 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.ReporteGeneralDTO;
+import com.example.demo.entity.Usuario;
+import com.example.demo.repository.ReporteDinamicoRepository;
 import com.example.demo.repository.ReporteRepository;
+import com.example.demo.repository.UsuarioRepository;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -8,6 +12,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -62,4 +67,38 @@ public class ReporteService {
         workbook.close();
         return new ByteArrayInputStream(out.toByteArray());
     }
+
+    @Autowired
+    private ReporteDinamicoRepository reporteDinamicoRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    public List<ReporteGeneralDTO> generarReporteFiltradoMes(Authentication auth, int mes) {
+        String nomina = auth.getName();
+        Usuario usuario = usuarioRepository.findByNomina(nomina).orElse(null);
+        if (usuario == null) return List.of();
+
+        int rol = usuario.getId_rol();
+        List<String> centros;
+
+        switch (rol) {
+            case 2: centros = List.of("05-050", "08-085"); break;
+            case 3: centros = List.of("02-020", "08-082"); break;
+            case 4: centros = List.of("04-040", "08-084"); break;
+            case 5: centros = List.of("03-030", "08-083"); break;
+            case 6: centros = List.of("06-060"); break;
+            case 7: centros = List.of("08-087"); break;
+            case 8: centros = List.of("07-070"); break;
+            case 1: // Admin
+                // Aquí puedes seguir usando el método existente que no filtra
+                return reporteRepository.obtenerReportePorMes(mes)
+                        .stream().map(ReporteGeneralDTO::new).toList();
+            default:
+                return List.of();
+        }
+
+        return reporteDinamicoRepository.obtenerReporteConCentrosMes(mes, centros);
+    }
+
 }
