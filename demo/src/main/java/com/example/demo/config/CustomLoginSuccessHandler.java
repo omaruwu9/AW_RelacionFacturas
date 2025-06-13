@@ -28,6 +28,11 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         Usuario usuario = usuarioRepository.findByNomina(nomina)
                 .orElseThrow();
 
+        if (usuario.getId_rol() == 9) {
+            response.sendRedirect("/login");
+            return; // Importante para evitar que siga ejecutando el resto
+        }
+
         if (usuario.getId_rol() == 1) {
             response.sendRedirect("/adm_panel"); //si el rol de usuario es 1 (Administrador) se redirige al panel de administrador
         } else {

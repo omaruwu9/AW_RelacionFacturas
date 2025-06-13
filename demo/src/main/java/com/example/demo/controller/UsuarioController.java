@@ -36,9 +36,10 @@ public class UsuarioController {
         System.out.println("password: " + usuario.getPassword());
 
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        usuario.setId_rol(2);
+        usuario.setId_rol(9);
         usuarioRepository.save(usuario);
 
+        redirectAttributes.addFlashAttribute("registroMsg", "Cuenta creada, comunícate con HelpDesk para su activación");
         redirectAttributes.addFlashAttribute("success", "Usuario registrado correctamente");
         return "redirect:/login";
     }

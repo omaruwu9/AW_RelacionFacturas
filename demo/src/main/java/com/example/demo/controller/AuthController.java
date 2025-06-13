@@ -5,7 +5,9 @@ import com.example.demo.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 
@@ -18,19 +20,21 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> request, RedirectAttributes redirectAttributes, Model model) {
         String nomina = request.get("nomina");
         String password = request.get("password");
 
         Usuario user = usuarioRepository.findByNomina(nomina).orElse(null);
 
         if (user == null) {
+            model.addAttribute("loginMsg", "Nomina/Contraseña erroneos");
             return ResponseEntity
                     .status(401)
                     .body(Map.of("error", "Nómina no registrada"));
         }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
+            model.addAttribute("loginMsg", "Nomina/Contraseña erroneos");
             return ResponseEntity
                     .status(401)
                     .body(Map.of("error", "Contraseña incorrecta"));

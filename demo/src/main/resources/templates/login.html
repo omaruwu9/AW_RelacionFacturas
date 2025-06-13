@@ -138,8 +138,12 @@
                     <h4 class="mb-4" style="color: #e60012;">Iniciar Sesión</h4>
 
                     <!-- Mensaje de error -->
-                    <div th:if="${errorMsg}" style="color: red;">
-                        <p th:text="${errorMsg}"></p>
+                    <div th:if="${loginMsg}" class="alert alert-danger" th:text="${loginMsg}"></div>
+
+
+                    <!-- Mensaje de registro -->
+                    <div th:if="${registroMsg}" style="color: #28a745;">
+                        <p th:text="${registroMsg}"></p>
                     </div>
 
 
