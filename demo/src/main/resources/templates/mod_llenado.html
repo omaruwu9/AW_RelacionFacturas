@@ -231,6 +231,7 @@
         <input type="month" id="filtroFecha">
         <input type="hidden" id="filtroSolicitud" placeholder="Buscar Solicitud OC">
         <input type="text" id="filtroOrden" placeholder="Buscar Orden Compra">
+        <input type="text" id="filtroDescripcion" placeholder="Buscar Descripción de Compra">
         <input type="text" id="filtroCentro" placeholder="Buscar Centro de Costos">
         <input type="text" id="filtroProveedor" placeholder="Buscar Proveedor">
     </div>
@@ -311,15 +312,15 @@
 <script>
     function filtrarFilas(data) {
         const fecha = document.getElementById("filtroFecha").value;
-        const solicitud = document.getElementById("filtroSolicitud").value.toLowerCase();
         const orden = document.getElementById("filtroOrden").value.toLowerCase();
+        const descripcion = document.getElementById("filtroDescripcion").value.toLowerCase();
         const centro = document.getElementById("filtroCentro").value.toLowerCase();
         const nombreProveedor = document.getElementById("filtroProveedor").value.toLowerCase();
 
         return data.filter(item => {
             return (!fecha || item.fecha_orden?.substring(0, 7) === fecha) &&
-                (!solicitud || item.solicitudOc.toLowerCase().includes(solicitud)) &&
                 (!orden || item.ordenCompra.toLowerCase().includes(orden)) &&
+                (!descripcion || item.descripcionOC.toLowerCase().includes(descripcion)) &&
                 (!centro || item.centroCosto.toLowerCase().includes(centro)) &&
                 (!nombreProveedor || item.nombreProveedor.toLowerCase().includes(nombreProveedor));
         });

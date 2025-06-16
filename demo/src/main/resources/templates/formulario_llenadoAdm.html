@@ -329,7 +329,7 @@
         });
 
         document.getElementById("llenadoForm").addEventListener("submit", async function (e) {
-            e.preventDefault();
+            e.preventDefault(); //evita que se recargue
             const datos = Object.fromEntries(new FormData(e.target));
 
             // Asegurar que ID y orden_compra estén incluidos
@@ -341,14 +341,21 @@
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(datos)
-            });
-
-            if (res.ok) {
-                alert("Registro guardado correctamente");
-                window.location.href = "/mod_llenado";
-            } else {
-                alert("Error al guardar el registro");
-            }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error en el guardado");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert("Guardado con éxito");
+                    window.close(); // 👈 Cierra la ventana actual (si fue abierta con window.open)
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Ocurrió un error al guardar");
+                });
         });
     });
 </script>

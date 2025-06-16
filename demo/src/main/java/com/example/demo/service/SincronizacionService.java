@@ -50,8 +50,7 @@ public class SincronizacionService {
             JOIN PROMEX.PROVEEDOR p ON oc.PROVEEDOR = p.PROVEEDOR
             JOIN PROMEX.CUENTA_CONTABLE cc ON oce.CUENTA_CONTABLE = cc.CUENTA_CONTABLE
             WHERE
-                oce.CENTRO_COSTO IN ('05-050', '08-085')
-                AND YEAR(oce.FECHA) = 2025;
+                YEAR(oce.FECHA) = 2025;
             
         """;
 
