@@ -73,13 +73,13 @@
     </table>
 
 
-    <form id="llenadoForm">
+    <form id="llenadoForm" enctype="multipart/form-data">
         <input type="hidden" id="id" name="id">
 
         <input type="hidden" id="orden_compra" name="orden_compra">
 
-        <label for="archivo">Cargar archivo (XML/PDF):</label>
-        <input type="file" id="archivo" accept=".xml,.pdf" class="full-width">
+        <label for="archivoInput">Cargar archivo (XML):</label>
+        <input type="file" id="archivoInput"  name="archivoXml" class="full-width">
 
         <label for="claveProdServ">Clave Producto / Servicio</label>
         <select id="claveProdServ" class="full-width">
@@ -251,7 +251,7 @@
         }
 
 
-        document.getElementById("archivo").addEventListener("change", function (e) {
+        document.getElementById("archivoInput").addEventListener("change", function (e) {
             const archivo = e.target.files[0];
             if (archivo && archivo.name.endsWith(".xml")) {
                 const reader = new FileReader();
@@ -329,34 +329,39 @@
         });
 
         document.getElementById("llenadoForm").addEventListener("submit", async function (e) {
-            e.preventDefault(); //evita que se recargue
+            e.preventDefault(); // evita recarga
+
             const datos = Object.fromEntries(new FormData(e.target));
-
-            // Asegurar que ID y orden_compra estén incluidos
             datos.id = id;
-            const ordenCompraTexto = document.getElementById("ordenCompraTexto")?.textContent?.trim();
-            datos.orden_compra = ordenCompraTexto || "";
+            datos.orden_compra = document.getElementById("ordenCompraTexto")?.textContent?.trim() || "";
 
-            const res = await fetch("/llenadoG", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(datos)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error en el guardado");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert("Guardado con éxito");
-                    window.close(); // 👈 Cierra la ventana actual (si fue abierta con window.open)
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    alert("Ocurrió un error al guardar");
+            const formData = new FormData();
+            formData.append("archivoXml", archivoInput.files[0]);
+
+// ⬅️ Agrega los datos del DTO como JSON en el campo "llenado"
+            formData.append("llenado", new Blob([JSON.stringify(datos)], {
+                type: "application/json"
+            }));
+
+// Enviar
+            try {
+                const response = await fetch("/llenadoG", {
+                    method: "POST",
+                    body: formData
                 });
+
+                if (!response.ok) throw new Error("Error en el guardado");
+
+                const data = await response.json();
+                alert("Guardado con éxito");
+                window.close();
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Ocurrió un error al guardar");
+            }
+
         });
+
     });
 </script>
 

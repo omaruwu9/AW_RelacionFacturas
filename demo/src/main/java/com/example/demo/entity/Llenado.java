@@ -30,6 +30,8 @@ public class Llenado {
     private Integer id_familia;
     private Integer id_responsable;
     private Integer id_extpresupuesto;
+    private String ruta_xml;
+    private String ruta_pdf;
 
     // Getters y Setters
     public Integer getId() { return id; }
@@ -82,4 +84,19 @@ public class Llenado {
 
     public Integer getId_extpresupuesto() { return id_extpresupuesto; }
     public void setId_extpresupuesto(Integer id_extpresupuesto) { this.id_extpresupuesto = id_extpresupuesto; }
+
+    //ESTA PARTE ES LA ADICIÓN PARA EL ALMACENAMIENTO DE LOS DOCUMENTOS XML Y PDF (se almacenan rutas)
+
+    public String getRutaXml() {
+        return ruta_xml;
+    }
+    public void setRutaXml(String rutaXml) {
+        this.ruta_xml = rutaXml;
+    }
+    public String getRutaPdf() {
+        return ruta_pdf;
+    }
+    public void setRutaPdf(String rutaPdf) {
+        this.ruta_pdf = rutaPdf;
+    }
 }

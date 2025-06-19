@@ -7,16 +7,31 @@ import com.example.demo.entity.Usuario;
 import com.example.demo.repository.LlenadoRepository;
 import com.example.demo.repository.OrdenCompraRepository;
 import com.example.demo.repository.UsuarioRepository;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfWriter;
+import jakarta.servlet.http.HttpServletResponse;
+import jcifs.CIFSContext;
+import jcifs.context.SingletonContext;
+import jcifs.smb.NtlmPasswordAuthenticator;
+import jcifs.smb.SmbFile;
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.*;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +49,9 @@ public class OrdenCompraController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private LlenadoController llenadoController;
 
     Map<String, List<String>> centrosPorRol = Map.of(
             "Usuario_IT", List.of("05-050", "08-085"),
@@ -144,6 +162,24 @@ public class OrdenCompraController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron detalles para la orden.");
         }
     }
+
+    @GetMapping("/ver-pdf")
+    public void verPdf(@RequestParam("id") Integer idOrden, HttpServletResponse response) throws IOException {
+        String nombreArchivo = idOrden.toString() + ".xml";
+        // Construir la ruta dinámica del archivo
+        String ruta = "PROYECTO_CODIGO/pdf/" + nombreArchivo + ".xml.pdf"; // Asegúrate que esta ruta sea correcta
+        File file = new File(ruta);
+
+        if (file.exists()) {
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", "inline; filename=" + nombreArchivo + ".pdf");
+            Files.copy(file.toPath(), response.getOutputStream());
+            response.getOutputStream().flush();
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "El archivo no existe.");
+        }
+    }
+
 
 }
 

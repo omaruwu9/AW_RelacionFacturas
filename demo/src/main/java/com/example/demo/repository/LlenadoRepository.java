@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public interface LlenadoRepository extends CrudRepository<Llenado, LlenadoId> {
@@ -37,8 +38,6 @@ public interface LlenadoRepository extends CrudRepository<Llenado, LlenadoId> {
             "WHERE EXTRACT(YEAR FROM l.fecha) = :anio AND EXTRACT(MONTH FROM l.fecha) = :mes " +
             "GROUP BY f.familia", nativeQuery = true)
     List<FamiliaGrafica> obtenerTotalesPorFamiliaYMes(@Param("anio") int anio, @Param("mes") int mes);
-
-
 
 }
 
