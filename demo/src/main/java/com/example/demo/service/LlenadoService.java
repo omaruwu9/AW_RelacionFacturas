@@ -24,20 +24,4 @@ public class LlenadoService {
         return repository.findById(new LlenadoId(id));
     }
 
-    public String obtenerRutaXmlPorId(Integer id) {
-        LlenadoId llenadoId = new LlenadoId(id);
-        Llenado llenado = repository.findById(llenadoId)
-                .orElseThrow(() -> new RuntimeException("Llenado no encontrado con id: " + id));
-
-        return "C:/Users/omar.p/Documents/RESIDENCIAS/PROYECTO_CODIGO/PROYECTO_CODIGO/xml/" + llenado.getRutaXml();
-    }
-
-    public String obtenerRutaPdfPorId(Integer id) {
-        Llenado llenado = repository.findById(new LlenadoId(id))
-                .orElseThrow(() -> new RuntimeException("Llenado no encontrado con id: " + id));
-
-        return "C:/.../pdf/" + llenado.getRutaPdf(); // que sería 5652.xml.pdf
-    }
-
-
 }
