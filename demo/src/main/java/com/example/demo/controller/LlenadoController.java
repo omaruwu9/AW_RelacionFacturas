@@ -15,6 +15,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -35,10 +36,7 @@ import com.itextpdf.text.BaseColor;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.awt.*;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -127,7 +125,7 @@ public class LlenadoController {
 
             String nombreArchivo = StringUtils.cleanPath(archivo.getOriginalFilename());
             String extension = nombreArchivo.substring(nombreArchivo.lastIndexOf('.') + 1);
-            String nombreBase = llenado.getId() + "." + extension;
+            String nombreBase = llenado.getId() + "UUID" + llenado.getFolio_fiscal() + "." + extension;
 
             String xmlPath = null;
             String pdfPath = null;
@@ -143,13 +141,21 @@ public class LlenadoController {
             llenado.setRutaPdf(pdfPath);
 
             Llenado guardado = llenadoService.guardar(llenado);
-            return ResponseEntity.ok(guardado);
+
+            // Devolver JSON con la URL de descarga
+            String downloadUrl = "/llenado/pdf/" + guardado.getId();
+            Map<String, String> response = new HashMap<>();
+            response.put("mensaje", "Guardado exitosamente");
+            response.put("downloadUrl", downloadUrl);
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el llenado y archivos");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al guardar el llenado y archivos");
         }
     }
+
 
     private void generarPdfDesdeXml(String xmlPath, String pdfPath) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -177,7 +183,7 @@ public class LlenadoController {
 
         pdfDoc.add(Chunk.NEWLINE);
 
-        Paragraph paragraphInfo = new Paragraph(" Este documento no cuenta como un comprobante fiscal, su uso es meramente informativo. ", boldFont);
+        Paragraph paragraphInfo = new Paragraph(" **Este documento no cuenta como un comprobante fiscal, su uso es meramente informativo. ", boldFont);
         paragraphInfo.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
         pdfDoc.add(paragraphInfo);
 
@@ -204,7 +210,7 @@ public class LlenadoController {
         monedas.put("USD", "Dolares");
         monedas.put("EUR", "Euros");
         String moneda = comprobante.getAttribute("Moneda");
-        String descripcionMonedas = metodosPago.getOrDefault(moneda, "Desconocida (" + moneda + ")");
+        String descripcionMonedas = monedas.getOrDefault(moneda, "Desconocida (" + moneda + ")");
 
         Map<String, String> formasPago = new HashMap<>();
         formasPago.put("01", "Efectivo");
@@ -548,5 +554,28 @@ public class LlenadoController {
         pdfDoc.close();
     }
 
+
+    @GetMapping("/llenado/pdf/{id}")
+    public ResponseEntity<Resource> descargarPdf(@PathVariable Integer id) throws IOException {
+        Optional<Llenado> opt = llenadoService.obtenerPorId(id);
+        if (opt.isEmpty() || opt.get().getRutaPdf() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        File file = new File(opt.get().getRutaPdf());
+        if (!file.exists()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + file.getName());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(file.length())
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(resource);
+    }
 
 }

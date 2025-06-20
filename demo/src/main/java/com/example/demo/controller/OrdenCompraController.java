@@ -24,7 +24,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -163,22 +165,6 @@ public class OrdenCompraController {
         }
     }
 
-    @GetMapping("/ver-pdf")
-    public void verPdf(@RequestParam("id") Integer idOrden, HttpServletResponse response) throws IOException {
-        String nombreArchivo = idOrden.toString() + ".xml";
-        // Construir la ruta dinámica del archivo
-        String ruta = "PROYECTO_CODIGO/pdf/" + nombreArchivo + ".xml.pdf"; // Asegúrate que esta ruta sea correcta
-        File file = new File(ruta);
-
-        if (file.exists()) {
-            response.setContentType("application/pdf");
-            response.setHeader("Content-Disposition", "inline; filename=" + nombreArchivo + ".pdf");
-            Files.copy(file.toPath(), response.getOutputStream());
-            response.getOutputStream().flush();
-        } else {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "El archivo no existe.");
-        }
-    }
 
 
 }
