@@ -482,7 +482,10 @@
                             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                             color: #f4f4f4;
                             margin: 0;
-                            padding: 40px;
+                            padding: 0;
+                            display: flex;
+                            flex-direction: column;
+                            min-height: 100vh;
                         }
                         h2 {
                             font-size: 32px;
@@ -543,10 +546,20 @@
                             border-radius: 10px;
                             box-shadow: 0 2px 15px rgba(0,0,0,0.4);
                         }
+                        footer {
+                            background-color: #161616;
+                            color: #aaa;
+                            text-align: center;
+                            padding: 18px 0;
+                            font-size: 14px;
+                            border-top: 1px solid #2a2a2a;
+                        }
+
                     </style>
                 </head>
                 <body>
 
+                    <div style="flex: 1;">
                     <h2>Detalle de Orden de Compra</h2>
 
                     <table>
@@ -594,12 +607,12 @@
                             <!-- Columna 3: Botones -->
                             <td class="seccion" style="text-align: center;">
                                 <h4>Archivos</h4>
-                                <!-- Si quieres abrir el PDF al hacer clic -->
-                                <button onclick="window.open('/llenado/pdf/${idOrden}', '_blank')">Ver PDF</button>
-
+                                <!-- <button class="btn-descarga" onclick="window.open('/llenado/XML/${idOrden}', '_blank')">Ver XML</button> -->
+                                <button class="btn-descarga" onclick="window.open('/llenado/pdf/${idOrden}', '_blank')">Ver PDF</button>
                             </td>
                         </tr>
                     </table>
+                    </div>
 
                     <footer>
                         &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.

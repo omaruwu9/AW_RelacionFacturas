@@ -554,6 +554,28 @@ public class LlenadoController {
         pdfDoc.close();
     }
 
+    @GetMapping("/llenado/xml/{id}")
+    public ResponseEntity<Resource> descargarXml(@PathVariable Integer id) throws IOException {
+        Optional<Llenado> opt = llenadoService.obtenerPorId(id);
+        if (opt.isEmpty() || opt.get().getRutaXml() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        File file = new File(opt.get().getRutaXml());
+        if (!file.exists()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + file.getName());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(file.length())
+                .contentType(MediaType.APPLICATION_XML)
+                .body(resource);
+    }
 
     @GetMapping("/llenado/pdf/{id}")
     public ResponseEntity<Resource> descargarPdf(@PathVariable Integer id) throws IOException {
