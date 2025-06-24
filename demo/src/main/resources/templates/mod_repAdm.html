@@ -77,7 +77,7 @@
 </header>
 
 <div class="main-content">
-        <div class="contenido-flex">
+    <div class="contenido-flex">
         <!-- TABLA -->
         <div class="tabla-container">
             <table id="tablaFamilias">
@@ -97,6 +97,8 @@
                     <button onclick="abrirModal('semestral')">Reporte&nbsp;semestral</button>
                     <button onclick="abrirModal('anual')">Reporte&nbsp;anual</button>
                     <button onclick="abrirModal('japon')">Reporte&nbsp;Japón</button>
+                    <button onclick="abrirModal('budget')">Authorized Budget Mensual</button>
+                    <br>
                 </div>
                 <br>
 
@@ -254,80 +256,197 @@
 
 <!-- ---------- SCRIPT MODALES Y EXCEL ---------- -->
 <script>
-    function abrirModal(tipo){
-        const modal=document.getElementById("modalSeleccion");
-        const contenedor=document.getElementById("contenedorInputs");
-        const titulo=document.getElementById("tituloModal");
-        modal.style.display="flex";
+    let tipoReporteActual = "";
 
-        /* Opciones año dinámicas */
-        const anioActual=new Date().getFullYear();
-        let opcionesAnio="";
-        for(let i=anioActual;i>=anioActual-10;i--){opcionesAnio+=`<option value="${i}">${i}</option>`;}
+    function abrirModal(tipo) {
+        tipoReporteActual = tipo;
 
-        // Resetea HTML y set tipo
-        contenedor.innerHTML="";
-        contenedor.setAttribute("data-tipo",tipo);
+        const modal = document.getElementById("modalSeleccion");
+        const contenedor = document.getElementById("contenedorInputs");
+        const titulo = document.getElementById("tituloModal");
 
-        if(tipo==="mensual"){
-            titulo.textContent="Selecciona mes y año";
-            const meses=nombresMeses.map((n,i)=>`<option value="${i+1}">${n}</option>`).join("");
-            contenedor.innerHTML=`
-            <label>Año:<select id="anio">${opcionesAnio}</select></label>
-            <label>Mes:<select id="mes">${meses}</select></label>`;
-        }else if(tipo==="semestral"){
-            titulo.textContent="Selecciona semestre y año";
-            contenedor.innerHTML=`
-            <label>Año:<select id="anio">${opcionesAnio}</select></label>
-            <label>Semestre:<select id="semestre">
-                <option value="1">Enero-Junio</option>
-                <option value="2">Julio-Diciembre</option>
-            </select></label>`;
-        }else if(tipo==="anual"||tipo==="japon"){ /* Ambos solo requieren año */
-            titulo.textContent=tipo==="anual"?"Selecciona el año del reporte anual":"Selecciona el año del Reporte Japón";
-            contenedor.innerHTML=`<label>Año:<select id="anio">${opcionesAnio}</select></label>`;
+        contenedor.innerHTML = ""; // limpiar inputs previos
+
+        if (tipo === "mensual") {
+            titulo.textContent = "Selecciona el mes y año";
+            contenedor.innerHTML = `
+                <label for="mes">Mes:</label>
+                <select id="mes">
+                    <option value="1">Enero</option>
+                    <option value="2">Febrero</option>
+                    <option value="3">Marzo</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Mayo</option>
+                    <option value="6">Junio</option>
+                    <option value="7">Julio</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                </select>
+                <label for="anio">Año:</label>
+                <select id="anio"></select>
+            `;
+        } else if (tipo === "budget") {
+            titulo.textContent = "Selecciona el mes, año y centro de costos";
+            contenedor.innerHTML = `
+                <label for="mes">Mes:</label>
+                <select id="mes">
+                    <option value="1">Enero</option>
+                    <option value="2">Febrero</option>
+                    <option value="3">Marzo</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Mayo</option>
+                    <option value="6">Junio</option>
+                    <option value="7">Julio</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                </select>
+                <label for="anio">Año:</label>
+                <select id="anio"></select>
+
+                <label for="centroCostos">Centro de Costos:</label>
+                <select id="centroCostos">
+                    <option value="02-020">02-020</option>
+                    <option value="03-030">03-030</option>
+                    <option value="04-040">04-040</option>
+                    <option value="05-050">05-050</option>
+                    <option value="06-060">06-060</option>
+                    <option value="07-070">07-070</option>
+                    <option value="08-080">08-080</option>
+                    <option value="08-082">08-082</option>
+                    <option value="08-083">08-083</option>
+                    <option value="08-084">08-084</option>
+                    <option value="08-085">08-085</option>
+                </select>
+            `;
+        } else if (tipo === "semestral") {
+            titulo.textContent = "Selecciona el semestre y año";
+            contenedor.innerHTML = `
+                <label for="semestre">Semestre:</label>
+                <select id="semestre">
+                    <option value="1">Enero - Junio</option>
+                    <option value="2">Julio - Diciembre</option>
+                </select>
+                <label for="anio">Año:</label>
+                <select id="anio"></select>
+            `;
+        } else if (tipo === "anual" || tipo === "japon") {
+            titulo.textContent = "Selecciona el año";
+            contenedor.innerHTML = `
+                <label for="anio">Año:</label>
+                <select id="anio"></select>
+            `;
         }
+
+        // Rellenar años (últimos 5)
+        const anioSelect = document.getElementById("anio");
+        const añoActual = new Date().getFullYear();
+        for (let i = añoActual; i >= añoActual - 5; i--) {
+            const option = document.createElement("option");
+            option.value = i;
+            option.text = i;
+            anioSelect.appendChild(option);
+        }
+
+        modal.style.display = "flex";
     }
 
-    function cerrarModal(){document.getElementById("modalSeleccion").style.display="none";}
+    function cerrarModal() {
+        document.getElementById("modalSeleccion").style.display = "none";
+    }
 
-    function generarExcel(){
-        const contenedor=document.getElementById("contenedorInputs");
-        const tipo=contenedor.getAttribute("data-tipo");
-        const anio=document.getElementById("anio").value;
+    function generarExcel() {
+        const anio = document.getElementById("anio")?.value;
+        const tipo = tipoReporteActual;
 
-        /* --- Reporte JAPÓN (funcionalidad original) --- */
-        if(tipo==="japon"){
+        if (!anio) {
+            alert("Selecciona el año");
+            return;
+        }
+
+        // --- Reporte Japón ---
+        if (tipo === "japon") {
             fetch(`/api/reporteAnual/anual?anio=${anio}`)
-                .then(r=>r.blob())
-                .then(blob=>{
-                    const url=URL.createObjectURL(blob);
-                    const a=document.createElement("a");
-                    a.href=url;a.download=`Reporte_Japon_${anio}.xlsx`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+                .then(r => r.blob())
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `Reporte_Japon_${anio}.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
                 })
-                .catch(()=>alert("Error al generar Reporte Japón"));
-            cerrarModal();return;
+                .catch(() => alert("Error al generar Reporte Japón"));
+            cerrarModal();
+            return;
         }
 
-        /* --- NUEVO Reporte ANUAL (misma lógica mensual/semestral pero todo el año) --- */
-        if(tipo==="anual"){
-            window.location.href=`/api/reporte/descargar?anio=${anio}&mesInicio=1&mesFin=12`;
-            cerrarModal();return;
+        // --- Reporte Anual ---
+        if (tipo === "anual") {
+            window.location.href = `/api/reporte/descargar?anio=${anio}&mesInicio=1&mesFin=12`;
+            cerrarModal();
+            return;
         }
 
-        /* --- Mensual y semestral (sin cambios) --- */
-        let mesInicio=1,mesFin=12;
-        if(tipo==="mensual"){mesInicio=mesFin=document.getElementById("mes").value;}
-        else if(tipo==="semestral"){
-            const s=document.getElementById("semestre").value;
-            mesInicio=s==="1"?1:7;mesFin=s==="1"?6:12;
+        // --- Mensual y Semestral ---
+        if (tipo === "mensual" || tipo === "semestral") {
+            let mesInicio = 1, mesFin = 12;
+
+            if (tipo === "mensual") {
+                const mes = document.getElementById("mes").value;
+                mesInicio = mesFin = mes;
+            } else if (tipo === "semestral") {
+                const s = document.getElementById("semestre").value;
+                mesInicio = s === "1" ? 1 : 7;
+                mesFin = s === "1" ? 6 : 12;
+            }
+
+            window.location.href = `/api/reporte/descargar?anio=${anio}&mesInicio=${mesInicio}&mesFin=${mesFin}`;
+            cerrarModal();
+            return;
         }
-        window.location.href=`/api/reporte/descargar?anio=${anio}&mesInicio=${mesInicio}&mesFin=${mesFin}`;
-        cerrarModal();
+
+        // --- Budget mensual ---
+        if (tipo === "budget") {
+            const mes = document.getElementById("mes").value;
+            const centroCostos = document.getElementById("centroCostos").value;
+
+            if (!centroCostos) {
+                alert("Por favor selecciona un centro de costos");
+                return;
+            }
+
+            fetch(`/api/cuentasContables/reporte?anio=${anio}&mes=${mes}&centro_costos=${centroCostos}`)
+                .then(r => {
+                    if (!r.ok) throw new Error("Error al generar Budget");
+                    return r.blob();
+                })
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `AuthorizedBudget_${anio}_${mes}_${centroCostos}.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+                })
+                .catch(() => alert("Error al generar Reporte Budget"));
+
+            cerrarModal();
+            return;
+        }
+
+
+        alert("Tipo de reporte no reconocido");
     }
-
-    /* Cerrar modal al hacer clic fuera */
-    window.onclick=e=>{if(e.target===document.getElementById("modalSeleccion"))cerrarModal();};
 </script>
 
 </body>
