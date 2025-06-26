@@ -1,11 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.FamiliaGrafica;
-import com.example.demo.repository.CuentaContableRepository;
-import com.example.demo.repository.FamiliaRepository;
-import com.example.demo.repository.LlenadoRepository;
 import com.example.demo.service.CuentaContableService;
-import com.example.demo.service.ReporteAnualService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +22,7 @@ public class ReporteCuentaContableController {
 
     @Autowired
     @Qualifier("sqlServerJdbcTemplate")
-    private JdbcTemplate sqlServerJdbcTemplate;
+    private JdbcTemplate sqlServerJdbcTemplate; //necesario para poder utilizar la base de datos secundaria
 
     @Autowired
     private CuentaContableService cuentaContableService;
@@ -48,6 +43,10 @@ public class ReporteCuentaContableController {
         }
     }
 
+
+    //se realiza la consulta en la base de datos secundaria que es donde esta almacenado los totales por orden de compra sin tener que realizar
+    //almacenado dentro de la base de datos principal además de realizar llenado de ordenes, permitiendo de esta manera que tambipen sean consideras las ordenes de compra
+    //que se encuentran en transito.
     private Map<String, Double> traerTotalesPorCuenta(int anio, int mes, String centro_costos) {
         String sql = """
             SELECT
