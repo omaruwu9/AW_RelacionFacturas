@@ -132,10 +132,23 @@
         </select>
 
         <label for="familia">Familia</label>
-        <select id="familia" name="id_familia"></select>
+        <select id="familia" name="id_familia">
+            <option value="">Seleccione una familia</option>
+            <option th:each="familia : ${familias}"
+                    th:value="${familia.id_familia}"
+                    th:text="${familia.familia}">
+            </option>
+        </select>
+
 
         <label for="responsable">Responsable</label>
-        <select id="responsable" name="id_responsable"></select>
+        <select id="responsable" name="id_responsable">
+            <option value="">Seleccione un responsable</option>
+            <option th:each="resp : ${responsables}"
+                    th:value="${resp.id_responsable}"
+                    th:text="${resp.responsable}">
+            </option>
+        </select>
 
         <label for="extPresupuesto">Ext. Presupuesto</label>
         <select id="extPresupuesto" name="id_extpresupuesto"></select>

@@ -1,10 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.FamiliaGrafica;
-import com.example.demo.entity.Llenado;
-import com.example.demo.entity.OrdenCompra;
+import com.example.demo.entity.*;
+import com.example.demo.repository.FamiliaRepository;
 import com.example.demo.repository.LlenadoRepository;
 import com.example.demo.repository.OrdenCompraRepository;
+import com.example.demo.repository.ResponsableRepository;
 import com.example.demo.service.LlenadoService;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
@@ -55,6 +55,12 @@ public class LlenadoController {
     @Autowired
     private OrdenCompraRepository ordenCompraRepository;
 
+    @Autowired
+    private FamiliaRepository familiaRepository;
+
+    @Autowired
+    private ResponsableRepository responsableRepository;
+
     private final LlenadoService llenadoService;
 
     private static final String BASE_DIR = "PROYECTO_CODIGO/";
@@ -74,23 +80,36 @@ public class LlenadoController {
     @GetMapping("/llenado/{id}")
     public String mostrarFormulario(@PathVariable("id") Integer id, Model model) {
         Optional<OrdenCompra> ordenOpt = ordenCompraRepository.findById(id);
-        if (ordenOpt.isPresent()) {
-            model.addAttribute("orden", ordenOpt.get());
-            return "formulario_llenado"; // nombre del HTML (sin .html)
-        } else {
-            return "redirect:/error"; // o puedes mostrar una vista de error personalizada
+        Optional<Familia> familiaOpt = familiaRepository.findById(id);
+        Optional<Responsable> responsableOpt = responsableRepository.findById(id);
+
+        if (ordenOpt.isEmpty()) {
+            return "redirect:/error"; // o muestra vista de error personalizada
         }
+
+        model.addAttribute("orden", ordenOpt.get());
+        model.addAttribute("familias", familiaOpt.orElse(null)); // o una lista vacía si esperas lista
+        model.addAttribute("responsables", responsableOpt.orElse(null)); // igual que arriba
+
+        return "formulario_llenado";
     }
+
 
     @GetMapping("/llenadoAdm/{id}")
     public String mostrarFormularioAdm(@PathVariable("id") Integer id, Model model) {
         Optional<OrdenCompra> ordenOpt = ordenCompraRepository.findById(id);
-        if (ordenOpt.isPresent()) {
-            model.addAttribute("orden", ordenOpt.get());
-            return "formulario_llenadoAdm"; // nombre del HTML (sin .html)
-        } else {
-            return "redirect:/error"; // o puedes mostrar una vista de error personalizada
+        Optional<Familia> familiaOpt = familiaRepository.findById(id);
+        Optional<Responsable> responsableOpt = responsableRepository.findById(id);
+
+        if (ordenOpt.isEmpty()) {
+            return "redirect:/error"; // o muestra vista de error personalizada
         }
+
+        model.addAttribute("orden", ordenOpt.get());
+        model.addAttribute("familias", familiaOpt.orElse(null)); // o una lista vacía si esperas lista
+        model.addAttribute("responsables", responsableOpt.orElse(null)); // igual que arriba
+
+        return "formulario_llenadoAdm";
     }
 
     @GetMapping("/api/llenado/{id}")

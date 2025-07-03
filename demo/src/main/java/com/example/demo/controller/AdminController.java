@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.Rol;
 import com.example.demo.entity.Usuario;
+import com.example.demo.repository.RolRepository;
 import com.example.demo.repository.UsuarioRepository;
 import com.example.demo.service.AdmDatosNullService;
 import com.example.demo.service.DatosNullService;
@@ -19,6 +21,7 @@ import java.util.List;
 public class AdminController {
 
     private final UsuarioRepository usuarioRepository;
+    private final RolRepository rolRepository;
     private final AdmSincronizacionService admsincronizacionService;
     private final AdmDatosNullService admdatosNullService;
 
@@ -26,8 +29,11 @@ public class AdminController {
     @GetMapping("/usuarios")
     public String verUsuarios(Model model) {
         List<Usuario> usuarios = new ArrayList<>();
+        List<Rol> roles = new ArrayList<>();
         usuarioRepository.findAll().forEach(usuarios::add);
+        rolRepository.findAll().forEach(roles::add);
         model.addAttribute("usuarios", usuarios);
+        model.addAttribute("roles", roles);
         return "usuarios";
     }
 

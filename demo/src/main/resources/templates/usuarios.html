@@ -198,16 +198,12 @@
             <input type="email" name="email" id="emailInput" required>
             <label>Rol:</label>
             <select name="id_rol" id="rolInput" required>
-                <option value="1">Administrador</option>
-                <option value="2">Usuario IT</option>
-                <option value="3">Usuario RH</option>
-                <option value="4">Usuario OP</option>
-                <option value="5">Usuario PL</option>
-                <option value="6">Usuario EHS</option>
-                <option value="7">Usuario MTTO</option>
-                <option value="8">Expatriados</option>
-                <option value="9">Inactivo</option>
+                <option value="">Selecciona un rol</option>
+                <th:block th:each="rol : ${roles}">
+                    <option th:value="${rol.id_rol}" th:text="${rol.rol}"></option>
+                </th:block>
             </select>
+
             <label>Contraseña:</label>
             <input type="text" name="password" id="passwordInput" required>
             <div class="modal-footer">
