@@ -467,6 +467,16 @@
                 };
 
                 const safe = v => v === undefined || v === null ? "" : v;
+
+                function formatCurrency(value) {
+                    const num = parseFloat(value);
+                    return isNaN(num) ? value : new Intl.NumberFormat('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2
+                    }).format(num);
+                }
+
                 // Construir el contenido de detalles
                 let contenido = `
                 <!DOCTYPE html>
@@ -475,7 +485,7 @@
                     <meta charset="UTF-8">
                     <title>PROGEN</title>
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <link rel="icon" type="image/png" th:href="@{/images/favicon.png}"/>
+                    <link rel="icon" type="image/png" th:href="@{/static/images/favicon.png}"/>
                     <style>
                         body {
                             background-color: #0f0f0f;
@@ -534,6 +544,7 @@
                             transition: background-color 0.3s;
                             text-decoration: none;
                             text-align: center;
+                            align-items: center;
                         }
                         .btn-descarga:hover {
                             background-color: #b3000e;
@@ -555,6 +566,31 @@
                             border-top: 1px solid #2a2a2a;
                         }
 
+                        <!-- ACOMODO DE INFORMACIÓN -->
+                        .seccion {
+                          list-style: none;
+                          padding: 0;
+                          margin: 0;
+                        }
+
+                        .seccion li {
+                          display: grid;
+                          grid-template-columns: 180px 1fr; /* Ajusta 180px según la longitud de tus claves */
+                          gap: 10px;
+                          padding: 6px 0;
+                          border-bottom: 1px solid #2a2a2a;
+                          font-size: 14px;
+                          align-items: center;
+                        }
+
+                        .seccion .label {
+                          color: #ffffff;
+                          white-space: nowrap;
+                        }
+
+                        .seccion .valor {
+                          color: #ff4c4c;
+                        }
                     </style>
                 </head>
                 <body>
@@ -568,17 +604,17 @@
                             <td class="seccion">
                                 <h4>Datos de Orden</h4>
                                 <ul>
-                                    <li><strong>Solicitud OC:</strong> ${data.solicitudOC}</li>
-                                    <li><strong>Fecha Solicitud:</strong> ${data.fechaSolicitud}</li>
-                                    <li><strong>Orden Compra:</strong> ${data.ordenCompra}</li>
-                                    <li><strong>Descripción OC:</strong> ${data.descripcion}</li>
-                                    <li><strong>Fecha Emisión:</strong> ${data.fechaEmision}</li>
-                                    <li><strong>Fecha OC:</strong> ${data.fechaOC}</li>
-                                    <li><strong>Centro de Costos:</strong> ${data.centroCosto}</li>
-                                    <li><strong>Cuenta Contable:</strong> ${data.cuentaContable}</li>
-                                    <li><strong>Desc. Cuenta Contable:</strong> ${data.descCC}</li>
-                                    <li><strong>Proveedor:</strong> ${data.nombreProveedor}</li>
-                                    <li><strong>Estado:</strong> ${estadosMap[data.estado] || ""}</li>
+                                    <li class="label"><strong class="valor">Solicitud OC:</strong> ${data.solicitudOC}</li>
+                                    <li class="label"><strong class="valor">Fecha Solicitud:</strong> ${data.fechaSolicitud}</li>
+                                    <li class="label"><strong class="valor">Orden Compra:</strong> ${data.ordenCompra}</li>
+                                    <li class="label"><strong class="valor">Descripción OC:</strong> ${data.descripcion}</li>
+                                    <li class="label"><strong class="valor">Fecha Emisión:</strong> ${data.fechaEmision}</li>
+                                    <li class="label"><strong class="valor">Fecha OC:</strong> ${data.fechaOC}</li>
+                                    <li class="label"><strong class="valor">Centro de Costos:</strong> ${data.centroCosto}</li>
+                                    <li class="label"><strong class="valor">Cuenta Contable:</strong> ${data.cuentaContable}</li>
+                                    <li class="label"><strong class="valor">Desc. Cuenta Contable:</strong> ${data.descCC}</li>
+                                    <li class="label"><strong class="valor">Proveedor:</strong> ${data.nombreProveedor}</li>
+                                    <li class="label"><strong class="valor">Estado:</strong> ${estadosMap[data.estado] || ""}</li>
                                 </ul>
                             </td>
 
@@ -591,12 +627,12 @@
                                     <li><strong>Folio Fiscal:</strong> ${safe(data.folioFiscal)}</li>
                                     <li><strong>Cantidad:</strong> ${safe(data.cantidad)}</li>
                                     <li><strong>Moneda:</strong> ${safe(data.moneda)}</li>
-                                    <li><strong>Precio Unitario:</strong> ${safe(data.PU)}</li>
-                                    <li><strong>Subtotal:</strong> ${safe(data.subtotal)}</li>
+                                    <li><strong>Precio Unitario:</strong> ${formatCurrency(safe(data.PU))}</li>
+                                    <li><strong>Subtotal:</strong> ${formatCurrency(safe(data.subtotal))}</li>
                                     <li><strong>IVA (%):</strong> ${safe(data.IVAporc)}</li>
-                                    <li><strong>Total:</strong> ${safe(data.total)}</li>
-                                    <li><strong>Tipo de Cambio:</strong> ${safe(data.tipoCambio)}</li>
-                                    <li><strong>Pesos Totales:</strong> ${safe(data.pesosTotales)}</li>
+                                    <li><strong>Total:</strong> ${formatCurrency(safe(data.total))}</li>
+                                    <li><strong>Tipo de Cambio:</strong> ${formatCurrency(safe(data.tipoCambio))}</li>
+                                    <li><strong>Pesos Totales:</strong> ${formatCurrency(safe(data.pesosTotales))}</li>
                                     <li><strong>Póliza de Garantía:</strong> ${safe(data.poliza)}</li>
                                     <li><strong>Familia:</strong> ${familias[data.familia] || ""}</li>
                                     <li><strong>Responsable:</strong> ${responsables[data.responsable] || ""}</li>
@@ -607,9 +643,8 @@
                             <!-- Columna 3: Botones -->
                             <td class="seccion" style="text-align: center;">
                                 <h4>Archivos</h4>
-                                <!-- Si quieres abrir el PDF al hacer clic -->
-                                <button class="btn-descarga" onclick="window.open('/llenado/pdf/${idOrden}', '_blank')">Ver PDF</button>
-
+                                <!-- <button class="btn-descarga" onclick="window.open('/llenado/XML/${idOrden}', '_blank')">Ver XML</button> -->
+                                <img src="/images/pdf_icon.png" alt="PDF" style="width: 30px" onclick="window.open('/llenado/pdf/${idOrden}', '_blank')">
                             </td>
                         </tr>
                     </table>
@@ -621,6 +656,7 @@
                 </body>
                 </html>
             `;
+
 
                 const nuevaVentana = window.open("", "_blank");
                 nuevaVentana.document.write(contenido);

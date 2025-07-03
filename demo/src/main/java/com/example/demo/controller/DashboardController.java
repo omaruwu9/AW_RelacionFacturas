@@ -16,4 +16,7 @@ public class DashboardController {
 
     @GetMapping("/mod_repAdm")
     public String mod_repAdm() {return "mod_repAdm";}
+
+    @GetMapping("/mod_mantenimietno")
+    public String mod_Mantenimiento() {return "mod_mantenimiento";}
 }

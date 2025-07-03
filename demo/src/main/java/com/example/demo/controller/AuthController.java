@@ -2,12 +2,16 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Usuario;
 import com.example.demo.repository.UsuarioRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 
@@ -19,28 +23,24 @@ public class AuthController {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
+
+    @Transactional
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> request, RedirectAttributes redirectAttributes, Model model) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> request,
+                                                     HttpSession session) {
         String nomina = request.get("nomina");
         String password = request.get("password");
 
         Usuario user = usuarioRepository.findByNomina(nomina).orElse(null);
 
-        if (user == null) {
-            model.addAttribute("loginMsg", "Nomina/Contraseña erroneos");
-            return ResponseEntity
-                    .status(401)
-                    .body(Map.of("error", "Nómina no registrada"));
+        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+            return ResponseEntity.status(401).body(Map.of("error", "Credenciales incorrectas"));
         }
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            model.addAttribute("loginMsg", "Nomina/Contraseña erroneos");
-            return ResponseEntity
-                    .status(401)
-                    .body(Map.of("error", "Contraseña incorrecta"));
-        }
+        // ✅ Guardar la nómina en sesión (lo que necesitabas)
+        session.setAttribute("usuarioNomina", user.getNomina());
 
-        // Determinar redirección según el rol
+        // ✅ Redirección por rol
         String redireccion = (user.getId_rol() == 1) ? "/adm_panel" : "/dashboard";
 
         return ResponseEntity.ok(Map.of(
@@ -48,4 +48,5 @@ public class AuthController {
                 "redirect", redireccion
         ));
     }
+
 }

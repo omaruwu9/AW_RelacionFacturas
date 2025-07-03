@@ -41,6 +41,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,6 +189,15 @@ public class LlenadoController {
         paragraphInfo.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
         pdfDoc.add(paragraphInfo);
 
+
+        LocalDateTime fechaHoraActual = LocalDateTime.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String fechaHoraFormateada = fechaHoraActual.format(formato);
+
+        Paragraph fechaCrea = new Paragraph(" Fecha de creación de este documento: " + fechaHoraFormateada, boldFont);
+        fechaCrea.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+        pdfDoc.add(fechaCrea);
+
         pdfDoc.add(Chunk.NEWLINE);
 
 //---------------------------------------------------------------------------------------------------------
@@ -195,6 +206,7 @@ public class LlenadoController {
         Element TimbreFiscalDigital = xmlDoc.getDocumentElement();
         String fecha = comprobante.getAttribute("Fecha");
         String folio = comprobante.getAttribute("Folio");
+
 
 
         Map<String, String> metodosPago = new HashMap<>();
