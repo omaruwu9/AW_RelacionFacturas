@@ -6,34 +6,13 @@ import com.example.demo.entity.OrdenCompra;
 import com.example.demo.entity.Usuario;
 import com.example.demo.repository.LlenadoRepository;
 import com.example.demo.repository.OrdenCompraRepository;
+import com.example.demo.repository.RolCentroCostoRepository;
 import com.example.demo.repository.UsuarioRepository;
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfWriter;
-import jakarta.servlet.http.HttpServletResponse;
-import jcifs.CIFSContext;
-import jcifs.context.SingletonContext;
-import jcifs.smb.NtlmPasswordAuthenticator;
-import jcifs.smb.SmbFile;
-import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,62 +34,35 @@ public class OrdenCompraController {
     @Autowired
     private LlenadoController llenadoController;
 
-    Map<String, List<String>> centrosPorRol = Map.of(
-            "Usuario_IT", List.of("05-050", "08-085"),
-            "Usuario_RH", List.of("02-020", "08-082"),
-            "Usuario_OP", List.of("04-040", "08-084"),
-            "Usuario_PL", List.of("03-030", "08-083"),
-            "Usuario_EHS", List.of("06-060"),
-            "Usuario_MTTO", List.of("08-087"),
-            "Expatriados", List.of("07-070")
-            // etc...
-    );
-
+    @Autowired
+    private RolCentroCostoRepository rolCentroCostoRepository;
 
     @GetMapping
     public List<OrdenCompra> getAllOrdenesCompra(Authentication authentication) {
-        // Obtener usuario autenticado por su 'nomina'
         String nomina = authentication.getName();
         Usuario usuario = usuarioRepository.findByNomina(nomina).orElse(null);
 
         if (usuario == null) {
-            return List.of(); // o lanzar excepción si quieres forzar autenticación válida
+            return List.of();
         }
 
         int idRol = usuario.getId_rol();
 
-        List<String> centrosPermitidos;
+        // Si es administrador, retorna todo
+        if (idRol == 1) {
+            return ordenCompraRepository.findAll();
+        }
 
-        switch (idRol) {
-            case 2: // Usuario_IT
-                centrosPermitidos = List.of("05-050", "08-085");
-                break;
-            case 3: // Usuario_RH
-                centrosPermitidos = List.of("02-020", "08-082");
-                break;
-            case 4: // Usuario_OP
-                centrosPermitidos = List.of("04-040", "08-084");
-                break;
-            case 5: // Usuario_PL
-                centrosPermitidos = List.of("03-030", "08-083");
-                break;
-            case 6: // Usuario_EHS
-                centrosPermitidos = List.of("06-060");
-                break;
-            case 7: // Usuario_MTTO
-                centrosPermitidos = List.of("08-087");
-                break;
-            case 8: // Expatriados
-                centrosPermitidos = List.of("07-070");
-                break;
-            case 1: // Administrador
-                return ordenCompraRepository.findAll(); // Admin ve todo
-            default:
-                centrosPermitidos = List.of(); // No tiene acceso a nada
+        // Obtener centros permitidos desde la base de datos
+        List<String> centrosPermitidos = rolCentroCostoRepository.findCentrosCostoByIdRol(idRol);
+
+        if (centrosPermitidos.isEmpty()) {
+            return List.of(); // o lanza excepción si quieres
         }
 
         return ordenCompraRepository.findByCentroCostoIn(centrosPermitidos);
     }
+
 
 
 

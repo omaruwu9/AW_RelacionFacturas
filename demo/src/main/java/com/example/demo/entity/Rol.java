@@ -1,8 +1,8 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "rol")
@@ -27,4 +27,7 @@ public class Rol {
     public void setRol(String rol) {
         this.rol = rol;
     }
+
+    @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<RolCentroCosto> centrosCosto;
 }

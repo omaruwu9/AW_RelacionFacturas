@@ -15,4 +15,6 @@ public interface OrdenCompraRepository extends CrudRepository<OrdenCompra, Strin
     //el id es un int que es autoincrementable a partir de los registros que se vayan realizando en la tabla
 
     List<OrdenCompra> findByCentroCostoIn(List<String> centroCosto);
+
+
 }
