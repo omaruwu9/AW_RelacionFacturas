@@ -4,7 +4,6 @@ import jakarta.persistence.Embeddable;
 
 import java.io.Serializable;
 
-@Embeddable
 public class RolCentroCostoId implements Serializable {
     private Integer idRol;
     private String centroCostos;
@@ -25,6 +24,5 @@ public class RolCentroCostoId implements Serializable {
         this.centroCostos = centroCostos;
     }
 
-    // equals() and hashCode()
 }
 

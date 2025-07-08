@@ -14,7 +14,7 @@
         #botones button:hover{background:#b3000e}
         main {flex: 1; padding: 50px 60px; max-width: 1280px; margin: 30px auto; background-color: #1b1b1b; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center;}
         h1 {font-size: 36px; margin-bottom: 40px; color: #e60012; border-left: 6px solid #e60012; padding-left: 20px; text-align: left;}
-        .modules {display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px 60px; justify-items: center;}
+        .modules {display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px 60px; justify-items: center; padding-bottom: 100px}
         .module-card {background-color: #1f1f1f; padding: 30px; border-radius: 10px; width: 300px; text-align: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6); transition: transform 0.2s ease, box-shadow 0.2s ease;}
         .module-card:hover {transform: translateY(-5px); box-shadow: 0 6px 16px rgba(0,0,0,0.8);}
         .module-card img {width: 75px; height: 75px; margin-bottom: 15px;}
@@ -24,18 +24,23 @@
         .module-card a:hover {background-color: #b3000e;}
         footer {background-color: #161616; padding: 15px 0; text-align: center; font-size: 14px; color: #aaa; border-top: 1px solid #2a2a2a;}
         table {
+            table-layout: fixed;
             width: 100%;
             border-collapse: collapse;
             background-color: #121212;
             border-radius: 8px;
             overflow: hidden;
+            overflow-x: auto;
             box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            padding-top: 200px;
         }
         th, td {
-            padding: 12px 15px;
+            padding: 12px 20px;
             border-bottom: 1px solid #2a2a2a;
             text-align: left;
             font-size: 14px;
+            word-wrap: break-word; <!-- Divide en varias lineas en caso de ser muy largo -->
+            white-space: pre-wrap; <!-- Mantiene los saltos de linea -->
         }
         th {
             background-color: #1f1f1f;
@@ -44,6 +49,49 @@
             font-size: 13px;
         }
         tr:hover {background-color: #262626;cursor: pointer;}
+        .json-cell{
+            white-space: pre-wrap;       /* Mantiene saltos y sangrías */
+            word-break: break-word;      /* Rompe palabras largas */
+            max-width: 600px;            /* Ajusta a lo que necesites */
+        }
+        .col-tabla, td:nth-child(2) {
+            width: 70px;
+        }
+        .col-op, td:nth-child(3) {
+            width: 75px;
+        }
+        .col-fecha, td:nth-child(6) {
+            width: 150px;
+            white-space: nowrap;
+        }
+        .filtros {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .filtros input {
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background-color: #111;
+            color: #eee;
+            font-size: 14px;
+        }
+        input[type="month"] {
+            color-scheme: dark;
+            color: #fff;
+        }
+        .tabla-scroll {
+            max-height: 500px; /* Puedes ajustar la altura según tu diseño */
+            overflow-y: auto;
+        }
+        table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #1f1f1f;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
@@ -56,46 +104,130 @@
 </header>
 
 <main>
+    <h1>Mantenimiento</h1>
     <div class="modules">
         <div class="module-card">
-            <img src="" alt="Mantenimiento Familia">
+            <img src="/images/familia.png" alt="Mantenimiento Familia">
             <h3>Familia</h3>
             <p>Añadir o eliminar familias.</p>
-            <a href="/">Ir a Módulo</a>
+            <a href="/familias">Mantenimiento</a>
         </div>
-
         <div class="module-card">
-            <img src="" alt="Mantenimiento Responsable">
+            <img src="/images/reponsables_mod.png" alt="Mantenimiento Responsable">
             <h3>Responsable</h3>
             <p>Añadir o eliminar responsables.</p>
-            <a href="/">Ir a Módulo</a>
+            <a href="/responsables">Mantenimiento</a>
         </div>
-
         <div class="module-card">
-            <img src="" alt="Mantenimiento Rol">
+            <img src="/images/rol.png" alt="Mantenimiento Rol">
             <h3>Rol</h3>
             <p>Añadir o eliminar roles.</p>
-            <a href="/">Ir al Módulo</a>
+            <a href="/roles">Mantenimiento</a>
+        </div>
+        <div class="module-card">
+            <img src="/images/centro_costos_rol.png" alt="Mantenimiento Centros de Costo">
+            <h3>Centro de Costo</h3>
+            <p>Añadir o eliminar permisos de centros de costos.</p>
+            <a href="/RolesCentrosCostos">Mantenimiento</a>
         </div>
     </div>
 
-    <table id="tabla" class="tabla-scroll">
-        <thead>
-        <tr>
-            <th>Usuario</th>
-            <th>Tabla afectada</th>
-            <th>Operación</th>
-            <th>Datos previos</th>
-            <th>Modificación</th>
-            <th>Fecha</th>
-        </tr>
-        </thead>
-        <tbody id="tablaBody"></tbody>
-    </table>
+    <h1>Bitacora de movimientos</h1>
+    <div class="filtros">
+        <input type="text" id="filtroTabla" placeholder="Buscar Tabla">
+        <input type="text" id="filtroOperacion" placeholder="Buscar Operación">
+        <input type="month" id="filtroFecha">
+    </div>
+
+        <table id="tabla" class="tabla-scroll">
+            <thead>
+            <tr>
+                <th hidden="hidden">Usuario</th>
+                <th class="col-tabla">Tabla afectada</th>
+                <th class="col-op">Operación</th>
+                <th class="json-cell">Datos previos</th>
+                <th class="json-cell">Modificación</th>
+                <th class="col-fecha">Fecha</th>
+            </tr>
+            </thead>
+            <tbody id="tablaBody"></tbody>
+        </table>
 </main>
 
 <footer>
     &copy; 2025 Promex Logistics S. de R.L. de C.V. Todos los derechos reservados.
 </footer>
+
+<script>
+    let dataGlobal = [];
+
+    function filtrarFilas(data) {
+        const tabla_afectada = document.getElementById("filtroTabla").value.toLowerCase();
+        const operacion = document.getElementById("filtroOperacion").value.toLowerCase();
+        const fecha = document.getElementById("filtroFecha").value;
+
+        return data.filter(item => {
+            return (!fecha || item.fecha?.substring(0, 7) === fecha) &&
+                (!operacion || item.operacion?.toLowerCase().includes(operacion)) &&
+                (!tabla_afectada || item.tabla_afectada?.toLowerCase().includes(tabla_afectada));
+        });
+    }
+
+    function cargarTabla(data) {
+        const tbody = document.getElementById('tablaBody');
+        tbody.innerHTML = '';
+        data.forEach(reg => {
+            const tr = document.createElement('tr');
+
+            // Obtener el nombre del usuario
+            let usuario = '—';
+            if (reg.nomina) {
+                usuario = reg.nomina.nombre || reg.nomina.nomina || JSON.stringify(reg.nomina);
+            }
+
+            // Clonar y eliminar campo password de datos_previos
+            let datosPrevios = { ...reg.datos_previos };
+            delete datosPrevios.password;
+            delete datosPrevios.ruta_xml;
+            delete datosPrevios.ruta_pdf;
+
+            // Clonar y eliminar campo password de datos_nuevos
+            let datosNuevos = { ...reg.datos_nuevos };
+            delete datosNuevos.password;
+            delete datosNuevos.ruta_xml;
+            delete datosNuevos.ruta_pdf;
+
+            tr.innerHTML = `
+            <td hidden="hidden">${usuario}</td>
+            <td>${reg.tabla_afectada}</td>
+            <td>${reg.operacion}</td>
+            <td><pre>${JSON.stringify(datosPrevios, null, 2)}</pre></td>
+            <td><pre>${JSON.stringify(datosNuevos, null, 2)}</pre></td>
+            <td>${new Date(reg.fecha).toLocaleString()}</td>
+        `;
+            tbody.appendChild(tr);
+        });
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/api/bitacora')
+            .then(res => res.json())
+            .then(data => {
+                dataGlobal = data;
+                cargarTabla(dataGlobal);
+            })
+            .catch(err => console.error('Error cargando bitácora:', err));
+
+        document.querySelectorAll('.filtros input').forEach(input => {
+            input.addEventListener('input', () => {
+                const filtrados = filtrarFilas(dataGlobal);
+                cargarTabla(filtrados);
+            });
+        });
+    });
+</script>
+
+
 </body>
 </html>

@@ -19,4 +19,16 @@ public class DashboardController {
 
     @GetMapping("/mod_mantenimietno")
     public String mod_Mantenimiento() {return "mod_mantenimiento";}
+
+    @GetMapping("/familias")
+    public String familias() {return "familias";}
+
+    @GetMapping("/responsables")
+    public String responsables() {return "responsables";}
+
+    @GetMapping("/roles")
+    public String roles() {return "roles";}
+
+    @GetMapping("/RolesCentrosCostos")
+    public String RolesCentrosCostos() {return "RolesCentrosCostos";}
 }

@@ -152,7 +152,13 @@
 
 
         <label for="extPresupuesto">Ext. Presupuesto</label>
-        <select id="extPresupuesto" name="id_extpresupuesto"></select>
+        <select id="extPresupuesto" name="id_extpresupuesto">
+            <option value="">Seleccione extensión</option>
+            <option th:each="ext : ${extension}"
+                    th:value="${ext.id_extpresupuesto}"
+                    th:text="${ext.ext_presupuesto}">
+            </option>
+        </select>
 
         <div class="full-width">
             <button type="submit">Guardar</button>
@@ -227,42 +233,6 @@
         document.getElementById("moneda").addEventListener("change", calcularPesosTotales);
         document.getElementById("tipo_cambio").addEventListener("input", calcularPesosTotales);
         document.getElementById("subtotal").addEventListener("input", calcularPesosTotales);
-
-        // cargar selects
-        const selects = [
-            { campo: "familia", idKey: "id_familia", textKey: "familia" },
-            { campo: "responsable", idKey: "id_responsable", textKey: "responsable" },
-            { campo: "extPresupuesto", idKey: "id_extpresupuesto", textKey: "ext_presupuesto" }
-        ];
-
-        for (const s of selects) {
-            const res = await fetch(`/api/${s.campo}`);
-            const data = await res.json();
-            const sel = document.getElementById(s.campo);
-
-            // Limpiar opciones existentes
-            sel.innerHTML = '<option value="">Seleccione una opción</option>';
-
-            // Añadir las opciones del backend
-            data.forEach(opt => {
-                const option = document.createElement("option");
-                option.value = String(opt[s.idKey]);
-                option.textContent = opt[s.textKey];
-                sel.appendChild(option);
-            });
-
-            // Solo asignar valor si hay datos previamente recuperados
-            if (typeof datos !== "undefined" && datos[s.idKey] && datos[s.idKey][s.idKey]) {
-                const valorSeleccionado = String(datos[s.idKey][s.idKey]);
-                const optionExiste = [...sel.options].some(opt => opt.value === valorSeleccionado);
-
-                if (optionExiste) {
-                    sel.value = valorSeleccionado;
-                } else {
-                    console.warn(`⚠️ No se encontró la opción para ${s.campo} con valor:`, valorSeleccionado);
-                }
-            }
-        }
 
 
         document.getElementById("archivoInput").addEventListener("change", function (e) {

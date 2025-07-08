@@ -4,14 +4,12 @@ import com.example.demo.entity.Familia;
 import com.example.demo.entity.Rol;
 import com.example.demo.repository.FamiliaRepository;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/familia")
+@RequestMapping("/api/familias")
 public class FamiliaController {
     private final FamiliaRepository familiaRepository;
 
@@ -26,8 +24,26 @@ public class FamiliaController {
 
     @GetMapping("/mostrar/familias")
     public String cargarRolesModificacion(Model model) {
-        List<Familia> familias = familiaRepository.findAll();  // Asume que tienes una entidad Rol
+        List<Familia> familias = familiaRepository.findAll();
         model.addAttribute("familias", familias);
-        return "usuarios"; // tu vista .html
+        return "formulario_llenado";
+    }
+
+    @PostMapping
+    public Familia create(@RequestBody Familia familia) {
+        return familiaRepository.save(familia);
+    }
+
+    @PutMapping("/{id}")
+    public Familia update(@PathVariable Integer id, @RequestBody Familia nueva) {
+        return familiaRepository.findById(id).map(f -> {
+            f.setFamilia(nueva.getFamilia());
+            return familiaRepository.save(f);
+        }).orElseThrow();
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Integer id) {
+        familiaRepository.deleteById(id);
     }
 }
