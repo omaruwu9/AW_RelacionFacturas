@@ -151,7 +151,13 @@
         </select>
 
         <label for="extPresupuesto">Ext. Presupuesto</label>
-        <select id="extPresupuesto" name="id_extpresupuesto"></select>
+        <select id="extPresupuesto" name="id_extpresupuesto">
+            <option value="">Seleccione extensión</option>
+            <option th:each="ext : ${extension}"
+                    th:value="${ext.id_extpresupuesto}"
+                    th:text="${ext.ext_presupuesto}">
+            </option>
+        </select>
 
         <div class="full-width">
             <button type="submit">Guardar</button>
