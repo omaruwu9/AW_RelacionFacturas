@@ -322,7 +322,7 @@
             const formData = new FormData();
             formData.append("archivoXml", archivoInput.files[0]);
 
-            // ⬅️ Agrega los datos del DTO como JSON en el campo "llenado"
+            // Agrega los datos del DTO como JSON en el campo "llenado"
             formData.append("llenado", new Blob([JSON.stringify(datos)], {
                 type: "application/json"
             }));

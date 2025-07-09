@@ -90,12 +90,15 @@ public class Llenado {
     public String getRutaXml() {
         return ruta_xml;
     }
+
     public void setRutaXml(String rutaXml) {
         this.ruta_xml = rutaXml;
     }
+
     public String getRutaPdf() {
         return ruta_pdf;
     }
+
     public void setRutaPdf(String rutaPdf) {
         this.ruta_pdf = rutaPdf;
     }
