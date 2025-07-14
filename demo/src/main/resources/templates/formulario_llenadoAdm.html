@@ -168,6 +168,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", async function () {
         const conceptosMap = {};
+        let rfcEmisor = "";
 
         const estadosMap = {
             "O": "Cancelado",
@@ -179,12 +180,9 @@
             "U": "Cerrada"
         };
 
-
-        // 🔹 Recuperar ID desde la URL
         const id = window.location.pathname.split("/").pop();
         document.getElementById("id").value = id;
 
-        // Obtener datos existentes del llenado si los hay
         try {
             const res = await fetch(`/api/llenado/${id}`);
             if (res.ok) {
@@ -192,16 +190,13 @@
                 if (datos) {
                     for (const [clave, valor] of Object.entries(datos)) {
                         const input = document.querySelector(`[name="${clave}"]`);
-                        if (input) {
-                            input.value = valor;
-                        }
+                        if (input) input.value = valor;
                     }
                 }
             }
         } catch (err) {
             console.error("Error al cargar datos existentes:", err);
         }
-
 
         const ordenCompraValor = document.getElementById("ordenCompraTexto")?.textContent?.trim();
         document.getElementById("orden_compra").value = ordenCompraValor || "";
@@ -212,8 +207,6 @@
             estadoSpan.textContent = estadosMap[estadoOriginal] || estadoOriginal;
         }
 
-
-        // Función para calcular pesos totales
         function calcularPesosTotales() {
             const subtotal = parseFloat(document.getElementById("subtotal").value || 0);
             const moneda = document.getElementById("moneda").value;
@@ -228,47 +221,9 @@
             document.getElementById("pesosTotales").value = pesosTotales.toFixed(2);
         }
 
-        // Recalcular cuando se cambia moneda o tipo de cambio
         document.getElementById("moneda").addEventListener("change", calcularPesosTotales);
         document.getElementById("tipo_cambio").addEventListener("input", calcularPesosTotales);
         document.getElementById("subtotal").addEventListener("input", calcularPesosTotales);
-
-        // cargar selects
-        const selects = [
-            { campo: "familia", idKey: "id_familia", textKey: "familia" },
-            { campo: "responsable", idKey: "id_responsable", textKey: "responsable" },
-            { campo: "extPresupuesto", idKey: "id_extpresupuesto", textKey: "ext_presupuesto" }
-        ];
-
-        for (const s of selects) {
-            const res = await fetch(`/api/${s.campo}`);
-            const data = await res.json();
-            const sel = document.getElementById(s.campo);
-
-            // Limpiar opciones existentes
-            sel.innerHTML = '<option value="">Seleccione una opción</option>';
-
-            // Añadir las opciones del backend
-            data.forEach(opt => {
-                const option = document.createElement("option");
-                option.value = String(opt[s.idKey]);
-                option.textContent = opt[s.textKey];
-                sel.appendChild(option);
-            });
-
-            // Solo asignar valor si hay datos previamente recuperados
-            if (typeof datos !== "undefined" && datos[s.idKey] && datos[s.idKey][s.idKey]) {
-                const valorSeleccionado = String(datos[s.idKey][s.idKey]);
-                const optionExiste = [...sel.options].some(opt => opt.value === valorSeleccionado);
-
-                if (optionExiste) {
-                    sel.value = valorSeleccionado;
-                } else {
-                    console.warn(`⚠️ No se encontró la opción para ${s.campo} con valor:`, valorSeleccionado);
-                }
-            }
-        }
-
 
         document.getElementById("archivoInput").addEventListener("change", function (e) {
             const archivo = e.target.files[0];
@@ -283,8 +238,12 @@
                     const comprobante = xml.getElementsByTagNameNS(nsCfdi, "Comprobante")[0];
                     const timbre = xml.getElementsByTagNameNS(nsTfd, "TimbreFiscalDigital")[0];
                     const conceptos = xml.getElementsByTagNameNS(nsCfdi, "Concepto");
+                    const emisor = xml.getElementsByTagNameNS(nsCfdi, "Emisor")[0];
 
-                    // Datos generales
+                    if (emisor) {
+                        rfcEmisor = emisor.getAttribute("Rfc") || "";
+                    }
+
                     if (comprobante) {
                         document.getElementById("factura").value = comprobante.getAttribute("Folio") || "";
                         const fecha = comprobante.getAttribute("Fecha") || "";
@@ -298,24 +257,54 @@
                         document.getElementById("folio_fiscal").value = timbre.getAttribute("UUID") || "";
                     }
 
-                    // Cargar conceptos al select
                     const select = document.getElementById("claveProdServ");
                     select.innerHTML = '<option value="">Seleccione una opción</option>';
-                    for (let concepto of conceptos) {
-                        const clave = concepto.getAttribute("ClaveProdServ");
-                        const descripcion = concepto.getAttribute("Descripcion");
-                        if (clave && descripcion) {
-                            conceptosMap[clave] = {
-                                descripcion,
-                                cantidad: concepto.getAttribute("Cantidad"),
-                                valorUnitario: concepto.getAttribute("ValorUnitario"),
-                                importe: concepto.getAttribute("Importe"),
-                                traslado: concepto.getElementsByTagNameNS(nsCfdi, "Traslado")[0]
-                            };
-                            const option = document.createElement("option");
-                            option.value = clave;
-                            option.textContent = `${clave} - ${descripcion}`;
-                            select.appendChild(option);
+
+                    if (rfcEmisor === "AXT940727FP8") {
+                        // Si es el RFC especial, solo usamos el primer concepto
+                        if (conceptos.length > 0) {
+                            const concepto = conceptos[0];
+                            const clave = concepto.getAttribute("ClaveProdServ");
+                            const descripcion = concepto.getAttribute("Descripcion");
+
+                            if (clave && descripcion) {
+                                conceptosMap[clave] = {
+                                    descripcion,
+                                    cantidad: concepto.getAttribute("Cantidad"),
+                                    valorUnitario: concepto.getAttribute("ValorUnitario"),
+                                    importe: concepto.getAttribute("Importe"),
+                                    traslado: concepto.getElementsByTagNameNS(nsCfdi, "Traslado")[0]
+                                };
+
+                                const option = document.createElement("option");
+                                option.value = clave;
+                                option.textContent = `${clave} - ${descripcion}`;
+                                select.appendChild(option);
+                            }
+
+                            // Subtotal y total ya se cargaron antes con valores globales
+                            calcularPesosTotales();
+                        }
+                    } else {
+                        // Para los demás RFCs: cargar todos los conceptos al select
+                        for (let concepto of conceptos) {
+                            const clave = concepto.getAttribute("ClaveProdServ");
+                            const descripcion = concepto.getAttribute("Descripcion");
+
+                            if (clave && descripcion) {
+                                conceptosMap[clave] = {
+                                    descripcion,
+                                    cantidad: concepto.getAttribute("Cantidad"),
+                                    valorUnitario: concepto.getAttribute("ValorUnitario"),
+                                    importe: concepto.getAttribute("Importe"),
+                                    traslado: concepto.getElementsByTagNameNS(nsCfdi, "Traslado")[0]
+                                };
+
+                                const option = document.createElement("option");
+                                option.value = clave;
+                                option.textContent = `${clave} - ${descripcion}`;
+                                select.appendChild(option);
+                            }
                         }
                     }
                 };
@@ -323,8 +312,6 @@
             }
         });
 
-
-        // Evento cuando seleccionas una claveProdServ
         document.getElementById("claveProdServ").addEventListener("change", function () {
             const clave = this.value;
             const concepto = conceptosMap[clave];
@@ -332,23 +319,27 @@
                 document.getElementById("descProducto").value = concepto.descripcion;
                 document.getElementById("cantidad").value = concepto.cantidad || "";
                 document.getElementById("pu").value = concepto.valorUnitario || "";
-                document.getElementById("subtotal").value = concepto.importe || "";
 
-                // Calcular IVA y Total
-                const subtotal = parseFloat(concepto.importe || "0");
-                const iva = subtotal * 0.16;
-                const total = subtotal + iva;
+                if (rfcEmisor === "AXT940727FP8") {
+                    // Usar los valores globales ya cargados en campos subtotal/total
+                    document.getElementById("iva_porc").value = 16;
+                    calcularPesosTotales();
+                } else {
+                    document.getElementById("subtotal").value = concepto.importe || "";
+                    const subtotal = parseFloat(concepto.importe || "0");
+                    const iva = subtotal * 0.16;
+                    const total = subtotal + iva;
 
-                document.getElementById("iva_porc").value = 16;
-                document.getElementById("total").value = total.toFixed(2);
+                    document.getElementById("iva_porc").value = 16;
+                    document.getElementById("total").value = total.toFixed(2);
 
-                // Recalcular pesos totales después de llenar campos
-                calcularPesosTotales();
+                    calcularPesosTotales();
+                }
             }
         });
 
         document.getElementById("llenadoForm").addEventListener("submit", async function (e) {
-            e.preventDefault(); // evita recarga
+            e.preventDefault();
 
             const datos = Object.fromEntries(new FormData(e.target));
             datos.id = id;
@@ -356,13 +347,10 @@
 
             const formData = new FormData();
             formData.append("archivoXml", archivoInput.files[0]);
-
-            // ⬅️ Agrega los datos del DTO como JSON en el campo "llenado"
             formData.append("llenado", new Blob([JSON.stringify(datos)], {
                 type: "application/json"
             }));
 
-            // Enviar
             try {
                 const response = await fetch("/llenadoG", {
                     method: "POST",
@@ -379,10 +367,8 @@
                 alert("Ocurrió un error al guardar");
             }
         });
-
     });
 </script>
-
 
 </body>
 </html>
