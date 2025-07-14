@@ -102,10 +102,7 @@
         <input type="number" id="cantidad" name="cantidad">
 
         <label for="moneda">Moneda</label>
-        <select id="moneda" name="moneda">
-            <option value="MXN">MXN</option>
-            <option value="USD">USD</option>
-        </select>
+        <input type="text" id="moneda" name="moneda">
 
         <label for="pu">Precio Unitario</label>
         <input type="number" step="0.01" id="pu" name="pu">
@@ -252,6 +249,7 @@
                         document.getElementById("subtotal").value = comprobante.getAttribute("SubTotal") || "";
                         document.getElementById("total").value = comprobante.getAttribute("Total") || "";
                         document.getElementById("tipo_cambio").value = comprobante.getAttribute("TipoCambio") || "1.00";
+                        document.getElementById("moneda").value = comprobante.getAttribute("Moneda") || "MXN";
                     }
 
                     if (timbre) {
@@ -262,7 +260,6 @@
                     select.innerHTML = '<option value="">Seleccione una opción</option>';
 
                     if (rfcEmisor === "AXT940727FP8") {
-                        // Si es el RFC especial, solo usamos el primer concepto
                         if (conceptos.length > 0) {
                             const concepto = conceptos[0];
                             const clave = concepto.getAttribute("ClaveProdServ");
@@ -283,11 +280,9 @@
                                 select.appendChild(option);
                             }
 
-                            // Subtotal y total ya se cargaron antes con valores globales
                             calcularPesosTotales();
                         }
                     } else {
-                        // Para los demás RFCs: cargar todos los conceptos al select
                         for (let concepto of conceptos) {
                             const clave = concepto.getAttribute("ClaveProdServ");
                             const descripcion = concepto.getAttribute("Descripcion");
@@ -322,7 +317,6 @@
                 document.getElementById("pu").value = concepto.valorUnitario || "";
 
                 if (rfcEmisor === "AXT940727FP8") {
-                    // Usar los valores globales ya cargados en campos subtotal/total
                     document.getElementById("iva_porc").value = 16;
                     calcularPesosTotales();
                 } else {
